@@ -1,0 +1,17 @@
+{
+  "name": "Home Helper",
+  "short_name": "HomeHelper",
+  "description": "Grocery, appointments, and tasks — all in one place.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0ea5e9",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://raw.githubusercontent.com/twitter/twemoji/master/assets/72x72/1f3e0.png",
+      "sizes": "72x72",
+      "type": "image/png"
+    }
+  ]
+}
