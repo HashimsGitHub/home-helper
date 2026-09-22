@@ -26,6 +26,8 @@
 - Optimised mobile response time through a session-scoped Turso connection,
   short user-keyed read caches, a combined dashboard query, and single-rerun
   list interactions.
+- Added 30-day remembered browser sessions using opaque tokens, automatic PWA
+  session restoration, and server-side revocation on sign-out.
 
 ## Lessons-learned constraints preserved
 
@@ -33,8 +35,9 @@
 - Keeps the Streamlit header visible.
 - Uses non-empty accessible labels for every widget.
 - Does not add a `pages/` directory or mix navigation systems.
-- Uses native Streamlit navigation, layout, and interactive controls; the only
-  added presentation override is the requested background styling.
+- Uses native Streamlit navigation, layout, and interactive controls. Custom
+  browser scripting is limited to PWA metadata, the requested background, and
+  setting or clearing the opaque remembered-session cookie.
 - Reads Streamlit Cloud Secrets first, with `.env` as the local fallback.
 - Keeps `libsql==0.1.11` and Python 3.12 compatibility.
 

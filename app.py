@@ -1,14 +1,23 @@
+import json
+import logging
+
 import streamlit as st
 import streamlit.components.v1 as components
-import logging
 
 from database import (
     UsernameTakenError,
     authenticate_user,
     close_session_connection,
+    create_persistent_session,
     create_user,
     init_db,
+    restore_persistent_session,
+    revoke_persistent_session,
 )
+
+
+SESSION_COOKIE_NAME = "homehelper_session"
+SESSION_COOKIE_MAX_AGE = 30 * 24 * 60 * 60
 
 logging.getLogger("streamlit.elements.lib.policies").setLevel(logging.ERROR)
 
@@ -116,13 +125,60 @@ components.html("""
 """, height=0)
 
 
+def _set_session_cookie(token):
+    """Store only an opaque session token in the browser, never the PIN."""
+    safe_token = json.dumps(token)
+    safe_name = json.dumps(SESSION_COOKIE_NAME)
+    components.html(
+        f"""
+        <script>
+        (function() {{
+          const parent = window.parent.document;
+          parent.cookie = {safe_name} + "=" + encodeURIComponent({safe_token})
+            + "; Path=/; Max-Age={SESSION_COOKIE_MAX_AGE}; Secure; SameSite=Lax";
+        }})();
+        </script>
+        """,
+        height=0,
+    )
+
+
+def _clear_session_cookie():
+    safe_name = json.dumps(SESSION_COOKIE_NAME)
+    components.html(
+        f"""
+        <script>
+        (function() {{
+          const parent = window.parent.document;
+          parent.cookie = {safe_name}
+            + "=; Path=/; Max-Age=0; Secure; SameSite=Lax";
+        }})();
+        </script>
+        """,
+        height=0,
+    )
+
+
+cookie_to_set = st.session_state.pop("_session_cookie_to_set", None)
+if cookie_to_set:
+    _set_session_cookie(cookie_to_set)
+
+if st.session_state.pop("_session_cookie_to_clear", False):
+    _clear_session_cookie()
+
+
 def _valid_pin(pin):
     return len(pin) == 4 and pin.isdigit()
 
 
-def _sign_in(user_row):
+def _sign_in(user_row, token=None, issue_cookie=True):
     st.session_state["user_id"] = user_row[0]
     st.session_state["username"] = user_row[1]
+    if token is None:
+        token = create_persistent_session(user_row[0])
+    st.session_state["_persistent_session_token"] = token
+    if issue_cookie:
+        st.session_state["_session_cookie_to_set"] = token
 
 
 def authentication_page():
@@ -201,6 +257,16 @@ def authentication_page():
                         st.error("That user name is already registered.")
 
 
+skip_cookie_restore = st.session_state.pop("_skip_cookie_restore_once", False)
+if "user_id" not in st.session_state and not skip_cookie_restore:
+    remembered_token = st.context.cookies.get(SESSION_COOKIE_NAME)
+    remembered_user = restore_persistent_session(remembered_token)
+    if remembered_user:
+        _sign_in(remembered_user, token=remembered_token, issue_cookie=False)
+    elif remembered_token:
+        _clear_session_cookie()
+
+
 if "user_id" not in st.session_state:
     auth_page = st.Page(
         authentication_page,
@@ -240,9 +306,13 @@ tasks_page = st.Page(
 signed_in_col, logout_col = st.columns([0.72, 0.28], vertical_alignment="center")
 signed_in_col.caption(f"Signed in as **{st.session_state['username']}**")
 if logout_col.button("Sign out", use_container_width=True):
+    persistent_token = st.session_state.pop("_persistent_session_token", None)
+    revoke_persistent_session(persistent_token)
     close_session_connection()
     st.session_state.pop("user_id", None)
     st.session_state.pop("username", None)
+    st.session_state["_session_cookie_to_clear"] = True
+    st.session_state["_skip_cookie_restore_once"] = True
     for auth_key in (
         "login_username",
         "login_pin",
