@@ -12,6 +12,47 @@ st.set_page_config(
     menu_items=None,
 )
 
+# ---------- Responsive background ----------
+# A strong white veil keeps text and controls readable while allowing the
+# supplied home image to give the app a warmer visual identity.
+st.markdown(
+    """
+    <style>
+        .stApp {
+            background-image:
+                linear-gradient(
+                    rgba(255, 255, 255, 0.80),
+                    rgba(255, 255, 255, 0.80)
+                ),
+                url("https://myresearchdata.blob.core.windows.net/home-helper/HomeImage.jpg");
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-size: cover;
+            background-attachment: fixed;
+        }
+
+        /* Keep native controls visually distinct from the photograph. */
+        [data-testid="stForm"],
+        [data-testid="stExpander"],
+        [data-testid="stAlert"],
+        [data-testid="stVerticalBlockBorderWrapper"] {
+            background-color: rgba(255, 255, 255, 0.78);
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
+            border-radius: 0.75rem;
+        }
+
+        @media (max-width: 768px) {
+            .stApp {
+                background-position: 58% center;
+                background-attachment: scroll;
+            }
+        }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
 # ---------- PWA manifest (keep this — it's the only custom HTML needed) ----------
 components.html("""
 <script>

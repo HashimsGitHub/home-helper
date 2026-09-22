@@ -15,6 +15,9 @@
 - Improved empty, success, and validation states.
 - Updated the colour theme and PWA metadata for a calmer home-oriented visual
   identity.
+- Added the supplied HomeImage photograph as a responsive full-screen
+  background with a white readability veil and subtly translucent content
+  surfaces.
 
 ## Lessons-learned constraints preserved
 
@@ -22,7 +25,8 @@
 - Keeps the Streamlit header visible.
 - Uses non-empty accessible labels for every widget.
 - Does not add a `pages/` directory or mix navigation systems.
-- Keeps PWA manifest injection as the only custom HTML.
+- Uses native Streamlit navigation, layout, and interactive controls; the only
+  added presentation override is the requested background styling.
 - Reads Streamlit Cloud Secrets first, with `.env` as the local fallback.
 - Keeps `libsql==0.1.11` and Python 3.12 compatibility.
 
