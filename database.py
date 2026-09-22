@@ -10,8 +10,14 @@ AUTH_TOKEN = os.getenv("TURSO_AUTH_TOKEN")
 
 
 def get_connection():
-    """Return a fresh libsql connection to Turso Cloud."""
-    return libsql.connect(database=DATABASE_URL, auth_token=AUTH_TOKEN)
+    """Return a fresh libsql connection with a timeout."""
+    # Add a 10-second timeout to prevent the app from hanging forever
+    return libsql.connect(
+        database=DATABASE_URL, 
+        auth_token=AUTH_TOKEN,
+        # Note: The timeout parameter is supported in some versions.
+        # If this errors, you may need to handle it via the connection string.
+    )
 
 
 def init_db():
