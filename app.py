@@ -54,9 +54,9 @@ components.html("""
 
 
 # Initialize DB once per session
-if "db_ready" not in st.session_state:
-    init_db()
-    st.session_state.db_ready = True
+#if "db_ready" not in st.session_state:
+#    init_db()
+#    st.session_state.db_ready = True
 
 st.title("🏠 Home Helper")
 st.caption("Your all-in-one household companion")
