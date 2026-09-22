@@ -20,9 +20,13 @@ def render_appointment(row):
         if description:
             st.write(description)
         with st.popover("Appointment actions"):
-            if st.button("Delete appointment", key=f"delete_appointment_{rid}", use_container_width=True):
-                delete_appointment(USER_ID, rid)
-                st.rerun()
+            st.button(
+                "Delete appointment",
+                key=f"delete_appointment_{rid}",
+                use_container_width=True,
+                on_click=delete_appointment,
+                args=(USER_ID, rid),
+            )
 
 
 st.title("Appointments")
@@ -55,7 +59,6 @@ with st.expander("Add appointment", icon="➕", expanded=False):
                     location.strip(),
                 )
                 st.toast("Appointment saved", icon="✅")
-                st.rerun()
 
 rows = get_appointments(USER_ID)
 today = date.today()

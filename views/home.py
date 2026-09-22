@@ -2,16 +2,17 @@ from datetime import date, datetime
 
 import streamlit as st
 
-from database import get_appointments, get_grocery, get_tasks
+from database import get_dashboard
 from ui_helpers import due_label, friendly_date, parse_datetime
 
 
 user_id = st.session_state["user_id"]
 username = st.session_state["username"]
 today = date.today()
-groceries = get_grocery(user_id)
-appointments = get_appointments(user_id)
-tasks = get_tasks(user_id)
+dashboard = get_dashboard(user_id)
+groceries = dashboard["groceries"]
+appointments = dashboard["appointments"]
+tasks = dashboard["tasks"]
 
 pending_grocery = [item for item in groceries if not item[4]]
 pending_tasks = [task for task in tasks if not task[5]]
@@ -81,3 +82,4 @@ if pending_grocery:
             quantity = f" · {item[2]}" if item[2] else ""
             st.write(f"• {item[1]}{quantity}")
 
+st.caption("Tip: add Home Helper to your phone's Home Screen for app-like access.")

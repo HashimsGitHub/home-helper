@@ -23,6 +23,9 @@
 - Personalised the dashboard heading with the signed-in user's name.
 - Added database-enforced record ownership to groceries, appointments, and
   tasks.
+- Optimised mobile response time through a session-scoped Turso connection,
+  short user-keyed read caches, a combined dashboard query, and single-rerun
+  list interactions.
 
 ## Lessons-learned constraints preserved
 

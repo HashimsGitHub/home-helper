@@ -2,7 +2,13 @@ import streamlit as st
 import streamlit.components.v1 as components
 import logging
 
-from database import UsernameTakenError, authenticate_user, create_user, init_db
+from database import (
+    UsernameTakenError,
+    authenticate_user,
+    close_session_connection,
+    create_user,
+    init_db,
+)
 
 logging.getLogger("streamlit.elements.lib.policies").setLevel(logging.ERROR)
 
@@ -234,6 +240,7 @@ tasks_page = st.Page(
 signed_in_col, logout_col = st.columns([0.72, 0.28], vertical_alignment="center")
 signed_in_col.caption(f"Signed in as **{st.session_state['username']}**")
 if logout_col.button("Sign out", use_container_width=True):
+    close_session_connection()
     st.session_state.pop("user_id", None)
     st.session_state.pop("username", None)
     for auth_key in (

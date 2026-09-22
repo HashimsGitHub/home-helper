@@ -11,15 +11,14 @@ def render_item(row):
     rid, item, quantity, category, purchased, _ = row
     with st.container(border=True):
         check_col, detail_col, action_col = st.columns([0.14, 0.66, 0.20])
-        checked = check_col.checkbox(
+        check_col.checkbox(
             f"Mark {item} as purchased",
             value=bool(purchased),
             key=f"grocery_status_{rid}",
             label_visibility="collapsed",
+            on_change=toggle_grocery,
+            args=(USER_ID, rid),
         )
-        if checked != bool(purchased):
-            toggle_grocery(USER_ID, rid)
-            st.rerun()
 
         with detail_col:
             st.markdown(f"~~{item}~~" if purchased else f"**{item}**")
@@ -29,9 +28,13 @@ def render_item(row):
 
         with action_col:
             with st.popover("More", use_container_width=True):
-                if st.button("Delete item", key=f"delete_grocery_{rid}", use_container_width=True):
-                    delete_grocery(USER_ID, rid)
-                    st.rerun()
+                st.button(
+                    "Delete item",
+                    key=f"delete_grocery_{rid}",
+                    use_container_width=True,
+                    on_click=delete_grocery,
+                    args=(USER_ID, rid),
+                )
 
 
 st.title("Grocery list")
@@ -48,7 +51,6 @@ with st.expander("Add grocery item", icon="➕", expanded=False):
             if item.strip():
                 add_grocery(USER_ID, item.strip(), quantity.strip(), category)
                 st.toast(f"Added {item.strip()}", icon="✅")
-                st.rerun()
             else:
                 st.warning("Enter an item name.")
 

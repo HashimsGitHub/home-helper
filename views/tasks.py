@@ -15,15 +15,14 @@ def render_task(row):
     rid, title, description, priority, due, completed = row
     with st.container(border=True):
         check_col, detail_col, action_col = st.columns([0.14, 0.66, 0.20])
-        checked = check_col.checkbox(
+        check_col.checkbox(
             f"Mark {title} as completed",
             value=bool(completed),
             key=f"task_status_{rid}",
             label_visibility="collapsed",
+            on_change=toggle_task,
+            args=(USER_ID, rid),
         )
-        if checked != bool(completed):
-            toggle_task(USER_ID, rid)
-            st.rerun()
 
         with detail_col:
             st.markdown(f"~~{title}~~" if completed else f"**{title}**")
@@ -33,9 +32,13 @@ def render_task(row):
 
         with action_col:
             with st.popover("More", use_container_width=True):
-                if st.button("Delete task", key=f"delete_task_{rid}", use_container_width=True):
-                    delete_task(USER_ID, rid)
-                    st.rerun()
+                st.button(
+                    "Delete task",
+                    key=f"delete_task_{rid}",
+                    use_container_width=True,
+                    on_click=delete_task,
+                    args=(USER_ID, rid),
+                )
 
 
 st.title("Tasks")
@@ -53,7 +56,6 @@ with st.expander("Add task", icon="➕", expanded=False):
             if title.strip():
                 add_task(USER_ID, title.strip(), description.strip(), priority, due.isoformat())
                 st.toast("Task added", icon="✅")
-                st.rerun()
             else:
                 st.warning("Enter a task name.")
 
