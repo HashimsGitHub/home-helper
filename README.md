@@ -1,59 +1,97 @@
 # Home Helper
 
-A mobile-first Streamlit Progressive Web App (PWA) for managing grocery lists,
-appointments, and household tasks from one simple dashboard.
+Home Helper is a simple mobile app for keeping your household organised. You
+can manage your grocery list, appointments, and household tasks in one place.
 
-Backend: **Turso Cloud (libSQL)** — edge-replicated SQLite.
+## Open Home Helper
 
-## User accounts
+Visit:
 
-- New users register with a unique user name and four-digit PIN.
-- A successful registration signs the user in immediately.
-- Grocery items, appointments, and tasks are filtered by the authenticated
-  database user ID.
-- Update and delete queries also verify ownership, preventing one user from
-  changing another user's records by ID.
-- The home page is personalised, for example, `Uzma's home at a glance`.
+### [https://homelist.streamlit.app/](https://homelist.streamlit.app/)
 
-This prototype stores PINs as plain text by design. It should therefore only
-be used for low-risk household data. Run `python homehelper_turso.py` with the
-Turso environment variables configured to list registered users and PINs.
+For the best experience, install Home Helper on your phone by following the
+instructions below.
 
-### Existing data after upgrade
+## Create your account
 
-At startup, the app automatically adds `user_id` to installations created
-before user accounts were introduced. Existing rows are deliberately left
-unassigned and hidden because the app cannot safely infer their owner. Assign
-them manually in Turso after the intended user has registered:
+1. Open Home Helper.
+2. Select the **Register** tab.
+3. Enter your name. This will become your user name.
+4. Choose a memorable **4-digit PIN**.
+5. Select **Create account**.
 
-```sql
-SELECT id, username FROM homehelper_users;
-UPDATE grocery SET user_id = 1 WHERE user_id IS NULL;
-UPDATE appointments SET user_id = 1 WHERE user_id IS NULL;
-UPDATE tasks SET user_id = 1 WHERE user_id IS NULL;
-```
+You will be signed in automatically. Your grocery items, appointments, and
+tasks are linked to your account, so you will only see your own records.
 
-Replace `1` with the correct registered user's ID.
+> Choose a PIN specifically for Home Helper. Do not reuse a banking, phone, or
+> other important PIN.
 
-## Mobile UX
+## Sign in
 
-- Native top navigation keeps every section visible without opening a sidebar.
-- Add forms stay collapsed until needed, keeping lists easy to scan.
-- Active and completed items are separated into focused tabs.
-- Large native controls and full-width actions work well on touch screens.
-- Destructive actions live inside an actions menu to reduce accidental deletion.
-- The PWA manifest supports adding Home Helper to a phone's Home Screen.
+1. Open Home Helper.
+2. Select the **Sign in** tab.
+3. Enter your user name and 4-digit PIN.
+4. Select **Sign in**.
 
-## Local development
+When you have finished, select **Sign out** at the top of the app—especially
+when using a shared phone or computer.
 
-```bash
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-echo 'TURSO_DATABASE_URL="libsql://..."' > .env
-echo 'TURSO_AUTH_TOKEN="..."' >> .env
-streamlit run app.py
-```
+## Install on Android
 
-For Streamlit Community Cloud, use Python 3.12 and add
-`TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN` in the app's Secrets settings.
+You must use **Google Chrome** to install Home Helper on an Android phone.
+
+1. Open **Google Chrome**.
+2. Go to [https://homelist.streamlit.app/](https://homelist.streamlit.app/).
+3. Wait for the **Install App** pop-up message.
+4. Select **Install** and accept the installation prompt.
+5. The Home Helper icon will be added to your phone's Home Screen.
+6. Open Home Helper from its icon just like any other app.
+
+If the installation pop-up does not appear, open Chrome's **three-dot menu**
+and select **Install app** or **Add to Home screen**.
+
+## Install on iPhone
+
+You must use **Safari** to add Home Helper to an iPhone.
+
+1. Open **Safari**.
+2. Go to [https://homelist.streamlit.app/](https://homelist.streamlit.app/).
+3. Select the **Share** button.
+4. Scroll down and select **Add to Home Screen**.
+5. Enable the **Web Application** toggle switch.
+6. Select **Add**.
+7. The Home Helper icon will be added to your iPhone's Home Screen.
+
+## Using Home Helper
+
+### Grocery list
+
+- Add an item, quantity, and category.
+- Tick an item after buying it.
+- View purchased items in the **Purchased** tab.
+
+### Appointments
+
+- Add the appointment title, date, time, location, and optional notes.
+- Use **Upcoming** for a simple list or **Calendar** for a calendar view.
+
+### Tasks
+
+- Add a household task with a due date and priority.
+- Tick a task when it is complete.
+- View finished tasks in the **Completed** tab.
+
+## Forgot your PIN?
+
+Home Helper does not provide automatic PIN reset. Contact the Home Helper
+administrator, who can retrieve your PIN for you.
+
+## Need help?
+
+If the app does not open correctly:
+
+1. Confirm that your phone is connected to the internet.
+2. Close and reopen Home Helper.
+3. Open [https://homelist.streamlit.app/](https://homelist.streamlit.app/) in
+   Chrome on Android or Safari on iPhone.
+4. Contact the Home Helper administrator if the problem continues.
