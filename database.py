@@ -21,7 +21,6 @@ def get_connection():
 
 
 def init_db():
-    """Create all tables if they don't exist."""
     conn = get_connection()
     conn.executescript("""
         CREATE TABLE IF NOT EXISTS grocery (
@@ -32,7 +31,6 @@ def init_db():
             purchased INTEGER DEFAULT 0,
             created_at TEXT DEFAULT CURRENT_TIMESTAMP
         );
-
         CREATE TABLE IF NOT EXISTS appointments (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             title TEXT NOT NULL,
@@ -42,7 +40,6 @@ def init_db():
             location TEXT,
             created_at TEXT DEFAULT CURRENT_TIMESTAMP
         );
-
         CREATE TABLE IF NOT EXISTS tasks (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             title TEXT NOT NULL,

@@ -3,7 +3,7 @@ import streamlit as st
 from streamlit_calendar import calendar
 from database import add_appointment, get_appointments, delete_appointment
 
-st.set_page_config(page_title="Appointments · HomeHelper", page_icon="📅", layout="centered")
+#st.set_page_config(page_title="Appointments · HomeHelper", page_icon="📅", layout="centered")
 st.title("📅 Appointments")
 
 with st.expander("➕ New Appointment", expanded=False):

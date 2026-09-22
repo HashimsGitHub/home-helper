@@ -7,7 +7,6 @@ font = "sans serif"
 
 [server]
 headless = true
-enableStaticServing = true
 
 [browser]
 gatherUsageStats = false
@@ -15,6 +14,3 @@ gatherUsageStats = false
 [client]
 toolbarMode = "minimal"
 showSidebarNavigation = true
-
-[ui]
-hideTopBar = true

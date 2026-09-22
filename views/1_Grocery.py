@@ -1,7 +1,7 @@
 import streamlit as st
 from database import add_grocery, get_grocery, toggle_grocery, delete_grocery
 
-st.set_page_config(page_title="Grocery · HomeHelper", page_icon="🛒")
+#st.set_page_config(page_title="Grocery · HomeHelper", page_icon="🛒")
 st.title("🛒 Grocery")
 
 with st.form("add_grocery", clear_on_submit=True):

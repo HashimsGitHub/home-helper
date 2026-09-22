@@ -2,7 +2,7 @@ from datetime import date
 import streamlit as st
 from database import add_task, get_tasks, toggle_task, delete_task
 
-st.set_page_config(page_title="Tasks · HomeHelper", page_icon="✅")
+#st.set_page_config(page_title="Tasks · HomeHelper", page_icon="✅")
 st.title("✅ Tasks")
 
 PRIORITY_ICON = {"High": "🔴", "Medium": "🟡", "Low": "🟢"}
