@@ -17,7 +17,6 @@ upcoming_appts = [
     if datetime.fromisoformat(a[3]).date() >= today
 ]
 
-# Native columns — no CSS override
 col1, col2, col3 = st.columns(3)
 
 with col1:
@@ -34,7 +33,6 @@ with col3:
 
 st.divider()
 
-# Preview sections
 st.markdown("### 🛒 Next up")
 pending_items = [g for g in groceries if not g[4]][:3]
 if not pending_items:
