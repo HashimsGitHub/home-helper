@@ -2,6 +2,8 @@ import streamlit as st
 import streamlit.components.v1 as components
 import logging
 
+from database import UsernameTakenError, authenticate_user, create_user, init_db
+
 logging.getLogger("streamlit.elements.lib.policies").setLevel(logging.ERROR)
 
 st.set_page_config(
@@ -11,6 +13,10 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
     menu_items=None,
 )
+
+if not st.session_state.get("_database_ready"):
+    init_db()
+    st.session_state["_database_ready"] = True
 
 # ---------- Responsive background ----------
 # A strong white veil keeps text and controls readable while allowing the
@@ -103,6 +109,102 @@ components.html("""
 </script>
 """, height=0)
 
+
+def _valid_pin(pin):
+    return len(pin) == 4 and pin.isdigit()
+
+
+def _sign_in(user_row):
+    st.session_state["user_id"] = user_row[0]
+    st.session_state["username"] = user_row[1]
+
+
+def authentication_page():
+    st.title("Welcome home")
+    st.caption("Sign in to see your private household lists.")
+
+    login_tab, register_tab = st.tabs(["Sign in", "Register"])
+
+    with login_tab:
+        with st.form("login_form"):
+            username = st.text_input(
+                "User name",
+                placeholder="Your name",
+                autocomplete="username",
+                key="login_username",
+            )
+            pin = st.text_input(
+                "4-digit PIN",
+                type="password",
+                max_chars=4,
+                autocomplete="current-password",
+                key="login_pin",
+            )
+            submitted = st.form_submit_button(
+                "Sign in",
+                type="primary",
+                use_container_width=True,
+            )
+
+            if submitted:
+                if not username.strip() or not _valid_pin(pin):
+                    st.warning("Enter your user name and four-digit PIN.")
+                else:
+                    user = authenticate_user(username, pin)
+                    if user:
+                        _sign_in(user)
+                        st.rerun()
+                    else:
+                        st.error("The user name or PIN is incorrect.")
+
+    with register_tab:
+        st.caption("Choose a unique name and a PIN you can remember.")
+        with st.form("registration_form"):
+            new_username = st.text_input(
+                "User name",
+                placeholder="e.g. Uzma",
+                max_chars=30,
+                autocomplete="username",
+                key="registration_username",
+            )
+            new_pin = st.text_input(
+                "Choose a 4-digit PIN",
+                type="password",
+                max_chars=4,
+                autocomplete="new-password",
+                key="registration_pin",
+            )
+            registered = st.form_submit_button(
+                "Create account",
+                type="primary",
+                use_container_width=True,
+            )
+
+            if registered:
+                clean_name = new_username.strip()
+                if len(clean_name) < 2:
+                    st.warning("User name must contain at least two characters.")
+                elif not _valid_pin(new_pin):
+                    st.warning("PIN must contain exactly four numbers.")
+                else:
+                    try:
+                        user_id = create_user(clean_name, new_pin)
+                        _sign_in((user_id, clean_name))
+                        st.rerun()
+                    except UsernameTakenError:
+                        st.error("That user name is already registered.")
+
+
+if "user_id" not in st.session_state:
+    auth_page = st.Page(
+        authentication_page,
+        title="Sign in",
+        icon="🔐",
+        default=True,
+    )
+    st.navigation([auth_page], position="hidden").run()
+    st.stop()
+
 # ---------- Define pages (native Streamlit way) ----------
 home_page = st.Page(
     "views/home.py",
@@ -129,7 +231,21 @@ tasks_page = st.Page(
     icon="✅",
 )
 
-# ---------- Register navigation (creates native sidebar menu) ----------
+signed_in_col, logout_col = st.columns([0.72, 0.28], vertical_alignment="center")
+signed_in_col.caption(f"Signed in as **{st.session_state['username']}**")
+if logout_col.button("Sign out", use_container_width=True):
+    st.session_state.pop("user_id", None)
+    st.session_state.pop("username", None)
+    for auth_key in (
+        "login_username",
+        "login_pin",
+        "registration_username",
+        "registration_pin",
+    ):
+        st.session_state.pop(auth_key, None)
+    st.rerun()
+
+# ---------- Register native top navigation ----------
 pg = st.navigation(
     [home_page, grocery_page, appointments_page, tasks_page],
     position="top",

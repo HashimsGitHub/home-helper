@@ -5,6 +5,36 @@ appointments, and household tasks from one simple dashboard.
 
 Backend: **Turso Cloud (libSQL)** — edge-replicated SQLite.
 
+## User accounts
+
+- New users register with a unique user name and four-digit PIN.
+- A successful registration signs the user in immediately.
+- Grocery items, appointments, and tasks are filtered by the authenticated
+  database user ID.
+- Update and delete queries also verify ownership, preventing one user from
+  changing another user's records by ID.
+- The home page is personalised, for example, `Uzma's home at a glance`.
+
+This prototype stores PINs as plain text by design. It should therefore only
+be used for low-risk household data. Run `python homehelper_turso.py` with the
+Turso environment variables configured to list registered users and PINs.
+
+### Existing data after upgrade
+
+At startup, the app automatically adds `user_id` to installations created
+before user accounts were introduced. Existing rows are deliberately left
+unassigned and hidden because the app cannot safely infer their owner. Assign
+them manually in Turso after the intended user has registered:
+
+```sql
+SELECT id, username FROM homehelper_users;
+UPDATE grocery SET user_id = 1 WHERE user_id IS NULL;
+UPDATE appointments SET user_id = 1 WHERE user_id IS NULL;
+UPDATE tasks SET user_id = 1 WHERE user_id IS NULL;
+```
+
+Replace `1` with the correct registered user's ID.
+
 ## Mobile UX
 
 - Native top navigation keeps every section visible without opening a sidebar.

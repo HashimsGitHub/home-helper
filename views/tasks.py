@@ -8,6 +8,7 @@ from ui_helpers import due_label
 
 PRIORITY_ICON = {"High": "🔴", "Medium": "🟡", "Low": "🟢"}
 PRIORITY_ORDER = {"High": 0, "Medium": 1, "Low": 2}
+USER_ID = st.session_state["user_id"]
 
 
 def render_task(row):
@@ -21,7 +22,7 @@ def render_task(row):
             label_visibility="collapsed",
         )
         if checked != bool(completed):
-            toggle_task(rid)
+            toggle_task(USER_ID, rid)
             st.rerun()
 
         with detail_col:
@@ -33,7 +34,7 @@ def render_task(row):
         with action_col:
             with st.popover("More", use_container_width=True):
                 if st.button("Delete task", key=f"delete_task_{rid}", use_container_width=True):
-                    delete_task(rid)
+                    delete_task(USER_ID, rid)
                     st.rerun()
 
 
@@ -50,13 +51,13 @@ with st.expander("Add task", icon="➕", expanded=False):
 
         if submitted:
             if title.strip():
-                add_task(title.strip(), description.strip(), priority, due.isoformat())
+                add_task(USER_ID, title.strip(), description.strip(), priority, due.isoformat())
                 st.toast("Task added", icon="✅")
                 st.rerun()
             else:
                 st.warning("Enter a task name.")
 
-rows = get_tasks()
+rows = get_tasks(USER_ID)
 active = sorted(
     (row for row in rows if not row[5]),
     key=lambda row: (row[4] or "9999-12-31", PRIORITY_ORDER.get(row[3], 3)),

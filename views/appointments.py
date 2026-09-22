@@ -7,6 +7,9 @@ from database import add_appointment, delete_appointment, get_appointments
 from ui_helpers import friendly_date, parse_datetime
 
 
+USER_ID = st.session_state["user_id"]
+
+
 def render_appointment(row):
     rid, title, description, start, end, location = row
     with st.container(border=True):
@@ -18,7 +21,7 @@ def render_appointment(row):
             st.write(description)
         with st.popover("Appointment actions"):
             if st.button("Delete appointment", key=f"delete_appointment_{rid}", use_container_width=True):
-                delete_appointment(rid)
+                delete_appointment(USER_ID, rid)
                 st.rerun()
 
 
@@ -44,6 +47,7 @@ with st.expander("Add appointment", icon="➕", expanded=False):
                 st.warning("End time must be after the start time.")
             else:
                 add_appointment(
+                    USER_ID,
                     title.strip(),
                     description.strip(),
                     start.isoformat(),
@@ -53,7 +57,7 @@ with st.expander("Add appointment", icon="➕", expanded=False):
                 st.toast("Appointment saved", icon="✅")
                 st.rerun()
 
-rows = get_appointments()
+rows = get_appointments(USER_ID)
 today = date.today()
 upcoming = [row for row in rows if parse_datetime(row[3]) and parse_datetime(row[3]).date() >= today]
 past = [row for row in rows if parse_datetime(row[3]) and parse_datetime(row[3]).date() < today]

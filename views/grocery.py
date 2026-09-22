@@ -4,6 +4,7 @@ from database import add_grocery, delete_grocery, get_grocery, toggle_grocery
 
 
 CATEGORIES = ["General", "Produce", "Dairy", "Meat", "Bakery", "Frozen", "Other"]
+USER_ID = st.session_state["user_id"]
 
 
 def render_item(row):
@@ -17,7 +18,7 @@ def render_item(row):
             label_visibility="collapsed",
         )
         if checked != bool(purchased):
-            toggle_grocery(rid)
+            toggle_grocery(USER_ID, rid)
             st.rerun()
 
         with detail_col:
@@ -29,7 +30,7 @@ def render_item(row):
         with action_col:
             with st.popover("More", use_container_width=True):
                 if st.button("Delete item", key=f"delete_grocery_{rid}", use_container_width=True):
-                    delete_grocery(rid)
+                    delete_grocery(USER_ID, rid)
                     st.rerun()
 
 
@@ -45,13 +46,13 @@ with st.expander("Add grocery item", icon="➕", expanded=False):
 
         if submitted:
             if item.strip():
-                add_grocery(item.strip(), quantity.strip(), category)
+                add_grocery(USER_ID, item.strip(), quantity.strip(), category)
                 st.toast(f"Added {item.strip()}", icon="✅")
                 st.rerun()
             else:
                 st.warning("Enter an item name.")
 
-rows = get_grocery()
+rows = get_grocery(USER_ID)
 active = [row for row in rows if not row[4]]
 purchased = [row for row in rows if row[4]]
 

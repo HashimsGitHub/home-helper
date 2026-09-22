@@ -6,10 +6,12 @@ from database import get_appointments, get_grocery, get_tasks
 from ui_helpers import due_label, friendly_date, parse_datetime
 
 
+user_id = st.session_state["user_id"]
+username = st.session_state["username"]
 today = date.today()
-groceries = get_grocery()
-appointments = get_appointments()
-tasks = get_tasks()
+groceries = get_grocery(user_id)
+appointments = get_appointments(user_id)
+tasks = get_tasks(user_id)
 
 pending_grocery = [item for item in groceries if not item[4]]
 pending_tasks = [task for task in tasks if not task[5]]
@@ -22,7 +24,8 @@ upcoming_appointments = [
 st.title("Home Helper")
 st.caption(datetime.now().strftime("%A, %d %B"))
 
-st.subheader("Your home at a glance")
+possessive_name = f"{username}'" if username.lower().endswith("s") else f"{username}'s"
+st.subheader(f"{possessive_name} home at a glance")
 st.page_link(
     "views/grocery.py",
     label=f"Grocery list · {len(pending_grocery)} to buy",

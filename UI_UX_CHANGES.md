@@ -18,6 +18,11 @@
 - Added the supplied HomeImage photograph as a responsive full-screen
   background with a white readability veil and subtly translucent content
   surfaces.
+- Added a mobile registration and sign-in screen using a user name and
+  four-digit PIN, plus an always-available sign-out action.
+- Personalised the dashboard heading with the signed-in user's name.
+- Added database-enforced record ownership to groceries, appointments, and
+  tasks.
 
 ## Lessons-learned constraints preserved
 
