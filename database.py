@@ -4,20 +4,34 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-_RAW_URL = os.getenv("TURSO_DATABASE_URL", "")
+
+def _setting(name, default=""):
+    """Read Streamlit Cloud secrets first, then fall back to local environment."""
+    try:
+        import streamlit as st
+
+        return st.secrets.get(name, os.getenv(name, default))
+    except Exception:
+        return os.getenv(name, default)
+
+
+_RAW_URL = _setting("TURSO_DATABASE_URL")
 DATABASE_URL = _RAW_URL.replace("turso://", "libsql://") if _RAW_URL.startswith("turso://") else _RAW_URL
-AUTH_TOKEN = os.getenv("TURSO_AUTH_TOKEN")
+AUTH_TOKEN = _setting("TURSO_AUTH_TOKEN", None)
 
 
 def get_connection():
-    """Return a fresh libsql connection with a timeout."""
-    # Add a 10-second timeout to prevent the app from hanging forever
-    return libsql.connect(
-        database=DATABASE_URL, 
-        auth_token=AUTH_TOKEN,
-        # Note: The timeout parameter is supported in some versions.
-        # If this errors, you may need to handle it via the connection string.
-    )
+    """Return a fresh local or Turso libSQL connection."""
+    if not DATABASE_URL:
+        raise RuntimeError(
+            "TURSO_DATABASE_URL is not configured. Add it to Streamlit Secrets "
+            "or your local .env file."
+        )
+
+    options = {"database": DATABASE_URL}
+    if AUTH_TOKEN:
+        options["auth_token"] = AUTH_TOKEN
+    return libsql.connect(**options)
 
 
 def init_db():

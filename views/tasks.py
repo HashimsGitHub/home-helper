@@ -1,60 +1,78 @@
 from datetime import date
-import streamlit as st
-from database import add_task, get_tasks, toggle_task, delete_task
 
-#st.set_page_config(page_title="Tasks · HomeHelper", page_icon="✅")
-st.title("✅ Tasks")
+import streamlit as st
+
+from database import add_task, delete_task, get_tasks, toggle_task
+from ui_helpers import due_label
+
 
 PRIORITY_ICON = {"High": "🔴", "Medium": "🟡", "Low": "🟢"}
+PRIORITY_ORDER = {"High": 0, "Medium": 1, "Low": 2}
 
-with st.form("add_task", clear_on_submit=True):
-    title = st.text_input("Task*", placeholder="e.g. Change light bulb")
-    desc = st.text_area("Notes", placeholder="Optional", height=80)
-    c1, c2 = st.columns(2)
-    priority = c1.selectbox("Priority", ["Low", "Medium", "High"], index=1)
-    due = c2.date_input("Due date", value=date.today())
 
-    if st.form_submit_button("➕ Add Task", use_container_width=True, type="primary"):
-        if title.strip():
-            add_task(title.strip(), desc.strip(), priority, due.isoformat())
-            st.toast("Task added!", icon="✅")
-            st.rerun()
-        else:
-            st.warning("Task title is required.")
-
-st.divider()
-
-rows = get_tasks()
-if not rows:
-    st.info("No tasks yet.")
-else:
-    for rid, title, desc, priority, due, completed in rows:
-        c1, c2 = st.columns([0.15, 0.85])
-        checked = c1.checkbox(
+def render_task(row):
+    rid, title, description, priority, due, completed = row
+    with st.container(border=True):
+        check_col, detail_col, action_col = st.columns([0.14, 0.66, 0.20])
+        checked = check_col.checkbox(
             f"Mark {title} as completed",
             value=bool(completed),
-            key=f"task_{rid}",
+            key=f"task_status_{rid}",
             label_visibility="collapsed",
         )
         if checked != bool(completed):
             toggle_task(rid)
             st.rerun()
 
-        with c2:
-            text = f"~~{title}~~" if completed else f"**{title}**"
-            st.markdown(text)
-            meta = []
-            if priority:
-                meta.append(f"{PRIORITY_ICON.get(priority,'')} {priority}")
-            if due:
-                meta.append(f"📅 {due}")
-            if meta:
-                st.caption(" · ".join(meta))
-            if desc:
-                st.caption(desc)
+        with detail_col:
+            st.markdown(f"~~{title}~~" if completed else f"**{title}**")
+            st.caption(f"{PRIORITY_ICON.get(priority, '')} {priority} · {due_label(due)}")
+            if description:
+                st.write(description)
 
-        if st.button("🗑️ Delete", key=f"deltask_{rid}", use_container_width=True):
-            delete_task(rid)
-            st.rerun()
+        with action_col:
+            with st.popover("More", use_container_width=True):
+                if st.button("Delete task", key=f"delete_task_{rid}", use_container_width=True):
+                    delete_task(rid)
+                    st.rerun()
 
-        st.markdown("---")
+
+st.title("Tasks")
+st.caption("Capture household jobs and see what needs attention first.")
+
+with st.expander("Add task", icon="➕", expanded=False):
+    with st.form("add_task", clear_on_submit=True):
+        title = st.text_input("Task", placeholder="Change the light bulb", autocomplete="off")
+        description = st.text_area("Notes", placeholder="Optional details", height=80)
+        priority = st.selectbox("Priority", ["Low", "Medium", "High"], index=1)
+        due = st.date_input("Due date", value=date.today())
+        submitted = st.form_submit_button("Add task", use_container_width=True, type="primary")
+
+        if submitted:
+            if title.strip():
+                add_task(title.strip(), description.strip(), priority, due.isoformat())
+                st.toast("Task added", icon="✅")
+                st.rerun()
+            else:
+                st.warning("Enter a task name.")
+
+rows = get_tasks()
+active = sorted(
+    (row for row in rows if not row[5]),
+    key=lambda row: (row[4] or "9999-12-31", PRIORITY_ORDER.get(row[3], 3)),
+)
+completed = [row for row in rows if row[5]]
+
+todo_tab, done_tab = st.tabs([f"To do ({len(active)})", f"Completed ({len(completed)})"])
+
+with todo_tab:
+    if not active:
+        st.success("All tasks are complete.", icon="✅")
+    for row in active:
+        render_task(row)
+
+with done_tab:
+    if not completed:
+        st.info("Completed tasks will appear here.")
+    for row in completed:
+        render_task(row)

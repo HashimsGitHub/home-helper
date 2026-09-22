@@ -1,55 +1,70 @@
 import streamlit as st
-from database import add_grocery, get_grocery, toggle_grocery, delete_grocery
 
-#st.set_page_config(page_title="Grocery · HomeHelper", page_icon="🛒")
-st.title("🛒 Grocery")
+from database import add_grocery, delete_grocery, get_grocery, toggle_grocery
 
-with st.form("add_grocery", clear_on_submit=True):
-    item = st.text_input("Item", placeholder="e.g. Milk")
-    c1, c2 = st.columns(2)
-    qty = c1.text_input("Qty", placeholder="1 L")
-    cat = c2.selectbox(
-        "Category",
-        ["General", "Produce", "Dairy", "Meat", "Bakery", "Frozen", "Other"],
-    )
-    if st.form_submit_button("➕ Add Item", use_container_width=True, type="primary"):
-        if item.strip():
-            add_grocery(item.strip(), qty.strip(), cat)
-            st.toast(f"Added {item}", icon="✅")
-            st.rerun()
-        else:
-            st.warning("Please enter an item.")
 
-st.divider()
+CATEGORIES = ["General", "Produce", "Dairy", "Meat", "Bakery", "Frozen", "Other"]
 
-rows = get_grocery()
-if not rows:
-    st.info("Your grocery list is empty. Add something above!")
-else:
-    for rid, item, qty, cat, purchased, _ in rows:
-        # Two-row layout per item for mobile
-        c1, c2 = st.columns([0.15, 0.85])
-        checked = c1.checkbox(
+
+def render_item(row):
+    rid, item, quantity, category, purchased, _ = row
+    with st.container(border=True):
+        check_col, detail_col, action_col = st.columns([0.14, 0.66, 0.20])
+        checked = check_col.checkbox(
             f"Mark {item} as purchased",
             value=bool(purchased),
-            key=f"chk_{rid}",
+            key=f"grocery_status_{rid}",
             label_visibility="collapsed",
         )
         if checked != bool(purchased):
             toggle_grocery(rid)
             st.rerun()
 
-        with c2:
-            text = f"~~{item}~~" if purchased else f"**{item}**"
-            meta = []
-            if qty:
-                meta.append(f"_{qty}_")
-            if cat and cat != "General":
-                meta.append(f"`{cat}`")
-            st.markdown(text + ("  \n" + " · ".join(meta) if meta else ""))
+        with detail_col:
+            st.markdown(f"~~{item}~~" if purchased else f"**{item}**")
+            details = [value for value in (quantity, category if category != "General" else "") if value]
+            if details:
+                st.caption(" · ".join(details))
 
-        if st.button("🗑️ Remove", key=f"del_{rid}", use_container_width=True):
-            delete_grocery(rid)
-            st.rerun()
+        with action_col:
+            with st.popover("More", use_container_width=True):
+                if st.button("Delete item", key=f"delete_grocery_{rid}", use_container_width=True):
+                    delete_grocery(rid)
+                    st.rerun()
 
-        st.markdown("---")
+
+st.title("Grocery list")
+st.caption("Keep the household shopping list in one place.")
+
+with st.expander("Add grocery item", icon="➕", expanded=False):
+    with st.form("add_grocery", clear_on_submit=True):
+        item = st.text_input("Item", placeholder="Milk", autocomplete="off")
+        quantity = st.text_input("Quantity", placeholder="1 litre", autocomplete="off")
+        category = st.selectbox("Category", CATEGORIES)
+        submitted = st.form_submit_button("Add to list", use_container_width=True, type="primary")
+
+        if submitted:
+            if item.strip():
+                add_grocery(item.strip(), quantity.strip(), category)
+                st.toast(f"Added {item.strip()}", icon="✅")
+                st.rerun()
+            else:
+                st.warning("Enter an item name.")
+
+rows = get_grocery()
+active = [row for row in rows if not row[4]]
+purchased = [row for row in rows if row[4]]
+
+to_buy_tab, purchased_tab = st.tabs([f"To buy ({len(active)})", f"Purchased ({len(purchased)})"])
+
+with to_buy_tab:
+    if not active:
+        st.success("Your list is clear.", icon="✅")
+    for row in active:
+        render_item(row)
+
+with purchased_tab:
+    if not purchased:
+        st.info("Purchased items will appear here.")
+    for row in purchased:
+        render_item(row)

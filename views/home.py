@@ -1,59 +1,81 @@
+from datetime import date, datetime
+
 import streamlit as st
-from datetime import datetime
-from database import get_grocery, get_appointments, get_tasks
 
-st.markdown("## 🏠 HomeHelper")
+from database import get_appointments, get_grocery, get_tasks
+from ui_helpers import due_label, friendly_date, parse_datetime
 
+
+today = date.today()
 groceries = get_grocery()
 appointments = get_appointments()
 tasks = get_tasks()
 
-pending_grocery = sum(1 for g in groceries if not g[4])
-pending_tasks = sum(1 for t in tasks if not t[5])
-
-today = datetime.now().date()
-upcoming_appts = [
-    a for a in appointments
-    if datetime.fromisoformat(a[3]).date() >= today
+pending_grocery = [item for item in groceries if not item[4]]
+pending_tasks = [task for task in tasks if not task[5]]
+upcoming_appointments = [
+    appointment
+    for appointment in appointments
+    if (parse_datetime(appointment[3]) and parse_datetime(appointment[3]).date() >= today)
 ]
 
-col1, col2, col3 = st.columns(3)
+st.title("Home Helper")
+st.caption(datetime.now().strftime("%A, %d %B"))
 
-with col1:
-    st.metric("🛒 Grocery", pending_grocery, help="Pending items")
-    st.page_link("views/grocery.py", label="Open Grocery", icon="🛒")
-
-with col2:
-    st.metric("📅 Appointments", len(upcoming_appts), help="Upcoming")
-    st.page_link("views/appointments.py", label="Open Calendar", icon="📅")
-
-with col3:
-    st.metric("✅ Tasks", pending_tasks, help="Pending tasks")
-    st.page_link("views/tasks.py", label="Open Tasks", icon="✅")
+st.subheader("Your home at a glance")
+st.page_link(
+    "views/grocery.py",
+    label=f"Grocery list · {len(pending_grocery)} to buy",
+    icon="🛒",
+    use_container_width=True,
+)
+st.page_link(
+    "views/appointments.py",
+    label=f"Appointments · {len(upcoming_appointments)} upcoming",
+    icon="📅",
+    use_container_width=True,
+)
+st.page_link(
+    "views/tasks.py",
+    label=f"Tasks · {len(pending_tasks)} to do",
+    icon="✅",
+    use_container_width=True,
+)
 
 st.divider()
+st.subheader("Today")
 
-st.markdown("### 🛒 Next up")
-pending_items = [g for g in groceries if not g[4]][:3]
-if not pending_items:
-    st.caption("_Nothing on the list_")
-else:
-    for rid, item, qty, cat, purchased, _ in pending_items:
-        st.markdown(f"• {item}" + (f" — {qty}" if qty else ""))
+today_appointments = [
+    item for item in upcoming_appointments if parse_datetime(item[3]).date() == today
+]
+today_tasks = [
+    item
+    for item in pending_tasks
+    if parse_datetime(item[4]) and parse_datetime(item[4]).date() <= today
+]
 
-st.markdown("### 📅 Upcoming")
-if not upcoming_appts:
-    st.caption("_No upcoming appointments_")
+if not today_appointments and not today_tasks:
+    st.success("Nothing urgent today — you're all caught up.", icon="✨")
 else:
-    for a in upcoming_appts[:3]:
-        dt = datetime.fromisoformat(a[3])
-        st.markdown(f"• **{dt.strftime('%a %d %b, %H:%M')}** — {a[1]}")
+    for appointment in today_appointments:
+        with st.container(border=True):
+            st.caption("APPOINTMENT")
+            st.markdown(f"**{appointment[1]}**")
+            details = friendly_date(appointment[3], include_time=True)
+            if appointment[5]:
+                details += f" · {appointment[5]}"
+            st.caption(details)
 
-st.markdown("### ✅ To do")
-pending = [t for t in tasks if not t[5]][:3]
-if not pending:
-    st.caption("_All caught up_")
-else:
-    for t in pending:
-        icon = {"High": "🔴", "Medium": "🟡", "Low": "🟢"}.get(t[3], "")
-        st.markdown(f"• {icon} {t[1]}")
+    for task in today_tasks:
+        with st.container(border=True):
+            st.caption("TASK")
+            st.markdown(f"**{task[1]}**")
+            st.caption(f"{due_label(task[4])} · {task[3]} priority")
+
+if pending_grocery:
+    with st.expander(f"Next grocery items ({min(3, len(pending_grocery))})"):
+        for item in pending_grocery[:3]:
+            quantity = f" · {item[2]}" if item[2] else ""
+            st.write(f"• {item[1]}{quantity}")
+
+st.caption("Tip: add Home Helper to your phone's Home Screen for app-like access.")
