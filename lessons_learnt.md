@@ -107,3 +107,19 @@ Legit: PWA manifest, third-party JS with no Streamlit equivalent.
 Never: navigation, layout, clickable cards, app shell styling.
 Rule: if Streamlit has a native widget, use it.
 
+## 20. Community Cloud stalls with inotify instance limit reached
+Streamlit's development file watcher can exhaust the Linux container's
+`inotify` handles and repeatedly log `OSError: [Errno 24] inotify instance
+limit reached`. Production Community Cloud does not need hot source reload.
+
+Fix in `.streamlit/config.toml`:
+
+```toml
+[server]
+headless = true
+fileWatcherType = "none"
+runOnSave = false
+```
+
+The non-theme configuration change takes effect after Streamlit restarts or a
+new Community Cloud deployment begins.

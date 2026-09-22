@@ -34,3 +34,10 @@ The app keeps Turso and reduces avoidable work in the Streamlit execution path.
 
 Streamlit Community Cloud cold starts after inactivity are controlled by the
 hosting platform and cannot be removed by application code.
+
+## Production file watcher
+
+The Streamlit source-code file watcher is disabled in production with
+`server.fileWatcherType = "none"`. This prevents Linux `inotify` exhaustion
+from stalling the app and does not affect GitHub-triggered Community Cloud
+deployments.
