@@ -28,6 +28,8 @@
   list interactions.
 - Keeps authentication session-only for a faster, simpler launch path. The same
   account can sign in concurrently on multiple devices and share its records.
+- Uses a lighter grey for example/placeholder text while keeping entered text
+  dark, so mobile users can immediately distinguish hints from saved input.
 
 ## Lessons-learned constraints preserved
 

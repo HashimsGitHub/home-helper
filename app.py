@@ -55,6 +55,20 @@ st.markdown(
             border-radius: 0.75rem;
         }
 
+        /* Clearly separate example/placeholder text from entered user data. */
+        [data-testid="stTextInput"] input,
+        [data-testid="stTextArea"] textarea {
+            color: #17211f !important;
+            -webkit-text-fill-color: #17211f !important;
+        }
+
+        [data-testid="stTextInput"] input::placeholder,
+        [data-testid="stTextArea"] textarea::placeholder {
+            color: #8a9490 !important;
+            -webkit-text-fill-color: #8a9490 !important;
+            opacity: 1 !important;
+        }
+
         @media (max-width: 768px) {
             .stApp {
                 background-position: 58% center;
