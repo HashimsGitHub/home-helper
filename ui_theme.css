@@ -166,3 +166,18 @@ a:focus-visible {outline:3px solid #059669 !important;outline-offset:2px;}
 @media(prefers-reduced-motion:reduce) {
   .stButton > button,.stFormSubmitButton > button {transition:none !important;transform:none !important;}
 }
+
+/* Home Helper: restore original photo and native navigation. */
+.stApp {
+  background-image: linear-gradient(rgba(255,255,255,.80),rgba(255,255,255,.80)), url("https://myresearchdata.blob.core.windows.net/home-helper/HomeImage.jpg") !important;
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
+  background-size: cover !important;
+  background-attachment: fixed !important;
+}
+[data-testid="stMainBlockContainer"] { padding-bottom: 2rem; }
+.st-key-hh_bottom_nav { display: none !important; }
+@media (max-width: 768px) {
+  .stApp { background-position: 58% center !important; background-attachment: scroll !important; }
+  [data-testid="stMainBlockContainer"] { padding-bottom: 2rem; }
+}

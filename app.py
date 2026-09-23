@@ -301,20 +301,8 @@ if logout_col.button("Sign out", use_container_width=True):
 # ---------- Register native top navigation ----------
 pg = st.navigation(
     [home_page, grocery_page, appointments_page, tasks_page],
-    position="top",
+    position="sidebar",
 )
 
 # ---------- Run the selected page ----------
 pg.run()
-
-# Mobile-friendly links to the existing pages; routing stays native Streamlit.
-with st.container(key="hh_bottom_nav"):
-    _hh_home, _hh_grocery, _hh_appts, _hh_tasks = st.columns(4, gap="small")
-    with _hh_home:
-        st.page_link("views/home.py", label="Home", icon="🏠", use_container_width=True)
-    with _hh_grocery:
-        st.page_link("views/grocery.py", label="Groceries", icon="🛒", use_container_width=True)
-    with _hh_appts:
-        st.page_link("views/appointments.py", label="Appts", icon="📅", use_container_width=True)
-    with _hh_tasks:
-        st.page_link("views/tasks.py", label="Tasks", icon="✅", use_container_width=True)
