@@ -36,8 +36,8 @@
 - Uses non-empty accessible labels for every widget.
 - Does not add a `pages/` directory or mix navigation systems.
 - Uses native Streamlit navigation, layout, and interactive controls. Custom
-  browser scripting is limited to PWA metadata, the requested background, and
-  setting or clearing the opaque remembered-session cookie.
+  browser scripting is limited to PWA metadata and the requested background;
+  an isolated Streamlit component handles the remembered-session cookie.
 - Reads Streamlit Cloud Secrets first, with `.env` as the local fallback.
 - Keeps `libsql==0.1.11` and Python 3.12 compatibility.
 

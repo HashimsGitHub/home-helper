@@ -7,8 +7,9 @@ allowing a trusted browser or installed PWA to restore the user automatically.
 
 1. A successful login or registration creates a cryptographically random,
    opaque token.
-2. The browser stores that token in a `Secure`, `SameSite=Lax` cookie for up to
-   30 days. The username, user ID, and PIN are not stored in the cookie.
+2. A Streamlit cookie component stores that token in a persistent `Secure`,
+   `SameSite=Lax` browser cookie for up to 30 days. The username, user ID, and
+   PIN are not stored in the cookie.
 3. Turso stores only the token's SHA-256 hash, user ID, and expiry time in the
    `homehelper_sessions` table.
 4. A new Streamlit session reads the cookie and looks up the active token hash.
@@ -33,3 +34,8 @@ The cookie is set from the browser and therefore cannot be `HttpOnly` in this
 Streamlit architecture. The random token, server-side hash, expiry, HTTPS-only
 cookie, and server-side revocation reduce the risk, but this remains appropriate
 only for the low-risk household data described by the project.
+
+`st.cache_data` is deliberately not used for authentication. Its global cache
+is shared across users and sessions, so it cannot identify which browser is
+making a request. It remains suitable for the app's short-lived, user-keyed
+database read caches.

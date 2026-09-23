@@ -1,8 +1,9 @@
-import json
 import logging
+from datetime import datetime, timedelta, timezone
 
 import streamlit as st
 import streamlit.components.v1 as components
+from streamlit_cookies_controller import CookieController
 
 from database import (
     UsernameTakenError,
@@ -18,6 +19,8 @@ from database import (
 
 SESSION_COOKIE_NAME = "homehelper_session"
 SESSION_COOKIE_MAX_AGE = 30 * 24 * 60 * 60
+SESSION_COOKIE_EXPIRES_DAYS = 30
+COOKIE_CONTROLLER_STATE_KEY = "homehelper_browser_cookies"
 
 logging.getLogger("streamlit.elements.lib.policies").setLevel(logging.ERROR)
 
@@ -28,6 +31,16 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
     menu_items=None,
 )
+
+# Streamlit can read request cookies natively, but its cookie context is
+# intentionally read-only. Seed the component's session-local cookie map from
+# that native value so the component is needed only for writes and deletes.
+# This also avoids an asynchronous first-render race in custom components.
+browser_session_token = st.context.cookies.get(SESSION_COOKIE_NAME)
+controller_cookies = st.session_state.setdefault(COOKIE_CONTROLLER_STATE_KEY, {})
+if browser_session_token:
+    controller_cookies.setdefault(SESSION_COOKIE_NAME, browser_session_token)
+cookie_controller = CookieController(key=COOKIE_CONTROLLER_STATE_KEY)
 
 if not st.session_state.get("_database_ready"):
     init_db()
@@ -127,35 +140,26 @@ components.html("""
 
 def _set_session_cookie(token):
     """Store only an opaque session token in the browser, never the PIN."""
-    safe_token = json.dumps(token)
-    safe_name = json.dumps(SESSION_COOKIE_NAME)
-    components.html(
-        f"""
-        <script>
-        (function() {{
-          const parent = window.parent.document;
-          parent.cookie = {safe_name} + "=" + encodeURIComponent({safe_token})
-            + "; Path=/; Max-Age={SESSION_COOKIE_MAX_AGE}; Secure; SameSite=Lax";
-        }})();
-        </script>
-        """,
-        height=0,
+    cookie_controller.set(
+        SESSION_COOKIE_NAME,
+        token,
+        path="/",
+        expires=datetime.now(timezone.utc)
+        + timedelta(days=SESSION_COOKIE_EXPIRES_DAYS),
+        max_age=SESSION_COOKIE_MAX_AGE,
+        secure=True,
+        same_site="lax",
     )
 
 
 def _clear_session_cookie():
-    safe_name = json.dumps(SESSION_COOKIE_NAME)
-    components.html(
-        f"""
-        <script>
-        (function() {{
-          const parent = window.parent.document;
-          parent.cookie = {safe_name}
-            + "=; Path=/; Max-Age=0; Secure; SameSite=Lax";
-        }})();
-        </script>
-        """,
-        height=0,
+    if cookie_controller.get(SESSION_COOKIE_NAME) is None:
+        return
+    cookie_controller.remove(
+        SESSION_COOKIE_NAME,
+        path="/",
+        secure=True,
+        same_site="lax",
     )
 
 
@@ -259,7 +263,7 @@ def authentication_page():
 
 skip_cookie_restore = st.session_state.pop("_skip_cookie_restore_once", False)
 if "user_id" not in st.session_state and not skip_cookie_restore:
-    remembered_token = st.context.cookies.get(SESSION_COOKIE_NAME)
+    remembered_token = browser_session_token
     remembered_user = restore_persistent_session(remembered_token)
     if remembered_user:
         _sign_in(remembered_user, token=remembered_token, issue_cookie=False)
