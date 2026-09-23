@@ -81,5 +81,3 @@ if pending_grocery:
         for item in pending_grocery[:3]:
             quantity = f" · {item[2]}" if item[2] else ""
             st.write(f"• {item[1]}{quantity}")
-
-

@@ -29,6 +29,7 @@ def render_appointment(row):
             )
 
 
+st.page_link("views/home.py", label="Home", icon="🏠")
 st.title("Appointments")
 st.caption("See upcoming commitments without hunting through the calendar.")
 

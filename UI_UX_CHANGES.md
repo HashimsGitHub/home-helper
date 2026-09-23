@@ -30,6 +30,9 @@
   account can sign in concurrently on multiple devices and share its records.
 - Uses a lighter grey for example/placeholder text while keeping entered text
   dark, so mobile users can immediately distinguish hints from saved input.
+- Adds a visible native Home link at the top of Grocery, Appointments, and
+  Tasks so mobile users do not need to reopen the navigation panel.
+- Removes the repeated Home Screen installation tip from the dashboard footer.
 
 ## Lessons-learned constraints preserved
 

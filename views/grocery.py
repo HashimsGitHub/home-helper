@@ -37,6 +37,7 @@ def render_item(row):
                 )
 
 
+st.page_link("views/home.py", label="Home", icon="🏠")
 st.title("Grocery list")
 st.caption("Keep the household shopping list in one place.")
 

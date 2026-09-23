@@ -41,6 +41,7 @@ def render_task(row):
                 )
 
 
+st.page_link("views/home.py", label="Home", icon="🏠")
 st.title("Tasks")
 st.caption("Capture household jobs and see what needs attention first.")
 
