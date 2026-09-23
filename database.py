@@ -95,6 +95,7 @@ def _ensure_user_column(connection, table_name):
         )
 
 
+@st.cache_resource(show_spinner=False)
 def init_db():
     """Create the schema and safely migrate pre-login installations."""
     connection = get_connection()

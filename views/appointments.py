@@ -63,8 +63,10 @@ with st.expander("Add appointment", icon="➕", expanded=False):
 
 rows = get_appointments(USER_ID)
 today = date.today()
-upcoming = [row for row in rows if parse_datetime(row[3]) and parse_datetime(row[3]).date() >= today]
-past = [row for row in rows if parse_datetime(row[3]) and parse_datetime(row[3]).date() < today]
+# Parse each appointment date once, then retain the original upcoming/past order.
+dated_rows = [(row, parse_datetime(row[3])) for row in rows]
+upcoming = [row for row, start in dated_rows if start and start.date() >= today]
+past = [row for row, start in dated_rows if start and start.date() < today]
 
 upcoming_tab, calendar_tab = st.tabs([f"Upcoming ({len(upcoming)})", "Calendar"])
 

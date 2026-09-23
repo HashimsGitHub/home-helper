@@ -19,7 +19,7 @@ pending_tasks = [task for task in tasks if not task[5]]
 upcoming_appointments = [
     appointment
     for appointment in appointments
-    if (parse_datetime(appointment[3]) and parse_datetime(appointment[3]).date() >= today)
+    if (start := parse_datetime(appointment[3])) and start.date() >= today
 ]
 
 st.title("Home Helper")

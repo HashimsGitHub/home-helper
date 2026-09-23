@@ -25,86 +25,8 @@ if not st.session_state.get("_database_ready"):
     init_db()
     st.session_state["_database_ready"] = True
 
-# ---------- Responsive background ----------
-# A strong white veil keeps text and controls readable while allowing the
-# supplied home image to give the app a warmer visual identity.
-st.markdown(
-    """
-    <style>
-        .stApp {
-            background-image:
-                linear-gradient(
-                    rgba(255, 255, 255, 0.80),
-                    rgba(255, 255, 255, 0.80)
-                ),
-                url("https://myresearchdata.blob.core.windows.net/home-helper/HomeImage.jpg");
-            background-repeat: no-repeat;
-            background-position: center center;
-            background-size: cover;
-            background-attachment: fixed;
-        }
-
-        /* Keep native controls visually distinct from the photograph. */
-        [data-testid="stForm"],
-        [data-testid="stExpander"],
-        [data-testid="stAlert"],
-        [data-testid="stVerticalBlockBorderWrapper"] {
-            background-color: rgba(255, 255, 255, 0.78);
-            backdrop-filter: blur(3px);
-            -webkit-backdrop-filter: blur(3px);
-            border-radius: 0.75rem;
-        }
-
-        /* Clearly separate example/placeholder text from entered user data. */
-        [data-testid="stTextInput"] input,
-        [data-testid="stTextArea"] textarea,
-        [data-testid="stDateInput"] input,
-        [data-testid="stTimeInput"] input {
-            color: #176b5b !important;
-            -webkit-text-fill-color: #176b5b !important;
-        }
-
-        [data-testid="stTextInput"] input::placeholder,
-        [data-testid="stTextArea"] textarea::placeholder {
-            color: #8a9490 !important;
-            -webkit-text-fill-color: #8a9490 !important;
-            opacity: 1 !important;
-        }
-
-        [data-testid="stSelectbox"] [data-baseweb="select"],
-        [data-testid="stSelectbox"] [data-baseweb="select"] * {
-            color: #176b5b !important;
-        }
-
-        /* Slightly larger native navigation labels and icons for touch use. */
-        [data-testid="stHeader"] a,
-        [data-testid="stHeader"] a span,
-        [data-testid="stTopNavSection"],
-        [data-testid="stTopNavSection"] span,
-        [data-testid="stPageLink-NavLink"],
-        [data-testid="stPageLink-NavLink"] span {
-            font-size: 1.05rem !important;
-        }
-
-        [data-testid="stHeader"] a svg,
-        [data-testid="stTopNavSection"] svg,
-        [data-testid="stPageLink-NavLink"] svg {
-            width: 1.25rem !important;
-            height: 1.25rem !important;
-        }
-
-        @media (max-width: 768px) {
-            .stApp {
-                background-position: 58% center;
-                background-attachment: scroll;
-            }
-        }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
-
-# ---------- Stitch-inspired visual theme (no business logic changes) ----------
+# ---------- Lightweight single stylesheet ----------
+# Keep all styling in ui_theme.css. Avoid overlapping injected CSS and blur effects.
 from pathlib import Path as _HHPath
 st.markdown(
     "<style>" + _HHPath(__file__).with_name("ui_theme.css").read_text(encoding="utf-8") + "</style>",
@@ -116,6 +38,8 @@ components.html("""
 <script>
 (function() {
   const parent = window.parent.document;
+  // Streamlit reruns this iframe: install the same manifest only once per page.
+  if (parent.querySelector('link[data-home-helper-manifest="1"]')) return;
   const manifest = {
     "name": "Home Helper",
     "short_name": "HomeHelper",
@@ -138,6 +62,7 @@ components.html("""
   parent.querySelectorAll('link[rel="manifest"]').forEach(e => e.remove());
   const link = document.createElement('link');
   link.rel = 'manifest';
+  link.dataset.homeHelperManifest = '1';
   link.href = url;
   parent.head.appendChild(link);
   parent.title = "Home Helper";
