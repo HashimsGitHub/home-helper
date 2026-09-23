@@ -1,7 +1,22 @@
 
-/* Home Helper — Minimal CSS */
+/* =========================================================
+   HOME HELPER — MINIMAL UI THEME
+   =========================================================
 
-/* Original background image */
+   Preserves native Streamlit widgets and performance.
+
+   Customizations:
+   - Original background image
+   - Green user-entered text
+   - Grey placeholder text
+   - Slightly larger sidebar navigation
+   - Slightly larger Home page navigation items
+
+   ========================================================= */
+
+
+/* 1. Original background image */
+
 .stApp {
     background-image:
         linear-gradient(
@@ -16,7 +31,9 @@
     background-attachment: fixed;
 }
 
-/* User-entered text: green */
+
+/* 2. User-entered text stays green */
+
 [data-testid="stTextInput"] input,
 [data-testid="stTextArea"] textarea,
 [data-testid="stDateInput"] input,
@@ -25,17 +42,89 @@
     -webkit-text-fill-color: #047857 !important;
 }
 
-/* Keep placeholder text at Streamlit's default colour */
+
+/* 3. Placeholder text stays grey */
+
 [data-testid="stTextInput"] input::placeholder,
 [data-testid="stTextArea"] textarea::placeholder {
     color: #94a3b8 !important;
     -webkit-text-fill-color: #94a3b8 !important;
 }
 
-/* Mobile background */
+
+/* =========================================================
+   4. NATIVE SIDEBAR NAVIGATION
+   ========================================================= */
+
+/* Slightly larger navigation labels */
+
+[data-testid="stSidebarNav"] a,
+[data-testid="stSidebarNav"] a span,
+[data-testid="stSidebarNav"] a p {
+    font-size: 1.05rem !important;
+    line-height: 1.5;
+}
+
+
+/* Slightly larger navigation icons */
+
+[data-testid="stSidebarNav"] a svg,
+[data-testid="stSidebarNav"] a [data-testid="stIcon"],
+[data-testid="stSidebarNav"] a [data-testid="stIconEmoji"] {
+    width: 22px !important;
+    height: 22px !important;
+    font-size: 22px !important;
+}
+
+
+/* Comfortable navigation touch targets */
+
+[data-testid="stSidebarNav"] a {
+    min-height: 46px;
+}
+
+
+/* =========================================================
+   5. HOME PAGE NAVIGATION ITEMS
+   ========================================================= */
+
+/* Slightly larger item labels */
+
+[data-testid="stPageLink-NavLink"],
+[data-testid="stPageLink-NavLink"] span,
+[data-testid="stPageLink-NavLink"] p {
+    font-size: 1.05rem !important;
+    line-height: 1.5;
+}
+
+
+/* Slightly larger Home page icons */
+
+[data-testid="stPageLink-NavLink"] svg,
+[data-testid="stPageLink-NavLink"] [data-testid="stIcon"],
+[data-testid="stPageLink-NavLink"] [data-testid="stIconEmoji"] {
+    width: 22px !important;
+    height: 22px !important;
+    font-size: 22px !important;
+}
+
+
+/* Comfortable Home page navigation touch targets */
+
+[data-testid="stPageLink-NavLink"] {
+    min-height: 48px;
+}
+
+
+/* =========================================================
+   6. MOBILE BACKGROUND
+   ========================================================= */
+
 @media (max-width: 768px) {
+
     .stApp {
         background-position: 58% center;
         background-attachment: scroll;
     }
+
 }
