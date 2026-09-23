@@ -57,9 +57,11 @@ st.markdown(
 
         /* Clearly separate example/placeholder text from entered user data. */
         [data-testid="stTextInput"] input,
-        [data-testid="stTextArea"] textarea {
-            color: #17211f !important;
-            -webkit-text-fill-color: #17211f !important;
+        [data-testid="stTextArea"] textarea,
+        [data-testid="stDateInput"] input,
+        [data-testid="stTimeInput"] input {
+            color: #176b5b !important;
+            -webkit-text-fill-color: #176b5b !important;
         }
 
         [data-testid="stTextInput"] input::placeholder,
@@ -67,6 +69,28 @@ st.markdown(
             color: #8a9490 !important;
             -webkit-text-fill-color: #8a9490 !important;
             opacity: 1 !important;
+        }
+
+        [data-testid="stSelectbox"] [data-baseweb="select"],
+        [data-testid="stSelectbox"] [data-baseweb="select"] * {
+            color: #176b5b !important;
+        }
+
+        /* Slightly larger native navigation labels and icons for touch use. */
+        [data-testid="stHeader"] a,
+        [data-testid="stHeader"] a span,
+        [data-testid="stTopNavSection"],
+        [data-testid="stTopNavSection"] span,
+        [data-testid="stPageLink-NavLink"],
+        [data-testid="stPageLink-NavLink"] span {
+            font-size: 1.05rem !important;
+        }
+
+        [data-testid="stHeader"] a svg,
+        [data-testid="stTopNavSection"] svg,
+        [data-testid="stPageLink-NavLink"] svg {
+            width: 1.25rem !important;
+            height: 1.25rem !important;
         }
 
         @media (max-width: 768px) {
