@@ -104,6 +104,13 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+# ---------- Stitch-inspired visual theme (no business logic changes) ----------
+from pathlib import Path as _HHPath
+st.markdown(
+    "<style>" + _HHPath(__file__).with_name("ui_theme.css").read_text(encoding="utf-8") + "</style>",
+    unsafe_allow_html=True,
+)
+
 # ---------- PWA manifest (keep this — it's the only custom HTML needed) ----------
 components.html("""
 <script>
@@ -299,3 +306,15 @@ pg = st.navigation(
 
 # ---------- Run the selected page ----------
 pg.run()
+
+# Mobile-friendly links to the existing pages; routing stays native Streamlit.
+with st.container(key="hh_bottom_nav"):
+    _hh_home, _hh_grocery, _hh_appts, _hh_tasks = st.columns(4, gap="small")
+    with _hh_home:
+        st.page_link("views/home.py", label="Home", icon="🏠", use_container_width=True)
+    with _hh_grocery:
+        st.page_link("views/grocery.py", label="Groceries", icon="🛒", use_container_width=True)
+    with _hh_appts:
+        st.page_link("views/appointments.py", label="Appts", icon="📅", use_container_width=True)
+    with _hh_tasks:
+        st.page_link("views/tasks.py", label="Tasks", icon="✅", use_container_width=True)

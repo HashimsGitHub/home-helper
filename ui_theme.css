@@ -1,0 +1,168 @@
+/* Home Helper — Stitch-inspired presentation layer.
+   Visual-only CSS: do not hide Streamlit widgets, labels, focus indicators or navigation. */
+:root {
+  --hh-primary: #10b981;
+  --hh-primary-dark: #047857;
+  --hh-primary-soft: #e6f9f3;
+  --hh-canvas: #f8f9ff;
+  --hh-card: #ffffff;
+  --hh-ink: #0f172a;
+  --hh-secondary: #475569;
+  --hh-border: #e2e8f0;
+}
+.stApp {
+  background: var(--hh-canvas) !important;
+  color: var(--hh-ink);
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+/* Preserve Streamlit's responsive layout; provide app-like breathing room. */
+[data-testid="stMainBlockContainer"] {
+  max-width: 1120px;
+  padding-top: 1.25rem;
+  padding-bottom: 7rem;
+}
+h1, h2, h3,
+[data-testid="stMarkdownContainer"] h1,
+[data-testid="stMarkdownContainer"] h2,
+[data-testid="stMarkdownContainer"] h3 {
+  font-family: "Plus Jakarta Sans", Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: var(--hh-ink);
+  letter-spacing: -.02em;
+}
+h1, [data-testid="stMarkdownContainer"] h1 {font-size:clamp(1.55rem, 4vw, 2rem);font-weight:750;line-height:1.25;}
+h2, [data-testid="stMarkdownContainer"] h2 {font-size:1.2rem;font-weight:700;}
+h3, [data-testid="stMarkdownContainer"] h3 {font-size:1.05rem;font-weight:700;}
+[data-testid="stCaptionContainer"], .stCaption {color:var(--hh-secondary) !important;}
+[data-testid="stVerticalBlockBorderWrapper"],
+[data-testid="stForm"],
+[data-testid="stExpander"] {
+  background:var(--hh-card) !important;
+  border:1px solid var(--hh-border) !important;
+  border-radius:16px !important;
+  box-shadow:0 1px 3px rgba(15,23,42,.045),0 5px 14px rgba(15,23,42,.025);
+  backdrop-filter:none !important;
+}
+[data-testid="stExpander"] summary {min-height:48px; font-weight:650;}
+/* Inputs: placeholder stays grey; typed values remain emerald on iOS and Android. */
+[data-testid="stTextInput"] input,
+[data-testid="stTextArea"] textarea,
+[data-testid="stDateInput"] input,
+[data-testid="stTimeInput"] input {
+  color:#047857 !important;
+  -webkit-text-fill-color:#047857 !important;
+  background:#fff !important;
+  border-radius:10px !important;
+  caret-color:#047857;
+}
+[data-testid="stTextInput"] input::placeholder,
+[data-testid="stTextArea"] textarea::placeholder {
+  color:#94a3b8 !important;
+  -webkit-text-fill-color:#94a3b8 !important;
+  opacity:1 !important;
+}
+[data-testid="stTextInput"] input,
+[data-testid="stDateInput"] input,
+[data-testid="stTimeInput"] input,
+[data-testid="stSelectbox"] > div {min-height:46px;}
+[data-testid="stTextInput"] input:focus,
+[data-testid="stTextArea"] textarea:focus,
+[data-testid="stDateInput"] input:focus,
+[data-testid="stTimeInput"] input:focus {
+  outline:2px solid var(--hh-primary) !important;
+  outline-offset:1px;
+}
+[data-testid="stSelectbox"] [data-baseweb="select"],
+[data-testid="stSelectbox"] [data-baseweb="select"] * {color:#047857 !important;}
+/* Primary and secondary actions remain real native Streamlit buttons. */
+.stButton > button,
+.stFormSubmitButton > button,
+[data-testid="stPopover"] button {
+  min-height:44px;
+  border-radius:12px;
+  font-weight:650;
+  transition:background-color .14s ease,transform .14s ease;
+}
+.stButton > button[kind="primary"],
+.stFormSubmitButton > button[kind="primary"] {
+  background:var(--hh-primary) !important;
+  color:#fff !important;
+  border-color:var(--hh-primary) !important;
+  box-shadow:0 2px 5px rgba(16,185,129,.16);
+}
+.stButton > button[kind="primary"]:hover,
+.stFormSubmitButton > button[kind="primary"]:hover {
+  background:var(--hh-primary-dark) !important;
+  border-color:var(--hh-primary-dark) !important;
+}
+.stButton > button:active,.stFormSubmitButton > button:active {transform:translateY(1px);}
+.stButton > button:focus-visible,
+.stFormSubmitButton > button:focus-visible,
+a:focus-visible {outline:3px solid #059669 !important;outline-offset:2px;}
+/* Lists, navigation links, tabs and checkbox taps. */
+[data-testid="stPageLink-NavLink"] {
+  min-height:48px;
+  padding:.65rem .8rem;
+  border:1px solid var(--hh-border);
+  border-radius:12px;
+  background:#fff;
+  font-weight:650;
+  text-decoration:none;
+}
+[data-testid="stPageLink-NavLink"]:hover {background:var(--hh-primary-soft);border-color:#a7f3d0;}
+[data-testid="stCheckbox"] label {min-height:44px;align-items:center;}
+[data-testid="stCheckbox"] input {accent-color:var(--hh-primary);}
+[data-baseweb="tab-list"] {
+  background:#eff4ff;
+  border-radius:12px;
+  padding:4px;
+  gap:4px;
+}
+[data-baseweb="tab"] {min-height:44px;border-radius:9px;font-weight:650;}
+[aria-selected="true"][data-baseweb="tab"] {
+  background:#fff;
+  box-shadow:0 1px 3px rgba(15,23,42,.09);
+  color:var(--hh-ink) !important;
+}
+[data-testid="stAlert"] {border-radius:14px;}
+/* Bottom nav is supplemental: native navigation and page routes stay intact. */
+.st-key-hh_bottom_nav {display:none;}
+@media(max-width:768px) {
+  [data-testid="stMainBlockContainer"] {
+    padding:1rem .85rem 7rem;
+  }
+  [data-testid="stHorizontalBlock"] {gap:.4rem;}
+  [data-testid="stVerticalBlockBorderWrapper"] {border-radius:14px !important;}
+  .st-key-hh_bottom_nav {
+    display:block;
+    position:fixed;
+    z-index:990;
+    left:0;right:0;bottom:0;
+    background:rgba(255,255,255,.97);
+    border-top:1px solid var(--hh-border);
+    box-shadow:0 -6px 22px rgba(15,23,42,.07);
+    padding:8px max(10px, env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left));
+  }
+  .st-key-hh_bottom_nav [data-testid="stHorizontalBlock"] {gap:4px;}
+  .st-key-hh_bottom_nav [data-testid="stPageLink-NavLink"] {
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    min-height:54px;
+    padding:5px 2px;
+    gap:2px;
+    border:0;
+    background:transparent;
+    border-radius:12px;
+    font-size:.8rem !important;
+    line-height:1.1;
+  }
+  .st-key-hh_bottom_nav [data-testid="stPageLink-NavLink"]:hover {background:var(--hh-primary-soft);}
+  .st-key-hh_bottom_nav [data-testid="stPageLink-NavLink"] span,
+  .st-key-hh_bottom_nav [data-testid="stPageLink-NavLink"] p {font-size:.8rem !important;}
+  .st-key-hh_bottom_nav [data-testid="stPageLink-NavLink"] svg {width:21px;height:21px;}
+}
+@media(prefers-reduced-motion:reduce) {
+  .stButton > button,.stFormSubmitButton > button {transition:none !important;transform:none !important;}
+}
