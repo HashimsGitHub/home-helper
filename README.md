@@ -59,10 +59,9 @@ If the installation pop-up does not appear, open Chrome's / Safari's **Share** o
 8. Select **Add**.
 7. The Home Helper icon will be added to your Phone's Home Screen.
 
-<img width="585" height="1266" alt="IMG_9685" src="https://github.com/user-attachments/assets/c876850d-8f73-4a5d-a8f4-18aabb92bcc3" />
-<img width="585" height="1266" alt="IMG_9686" src="https://github.com/user-attachments/assets/5f9b285a-b91a-4797-96ff-ffff82e8a171" />
-<img width="585" height="1266" alt="IMG_9687" src="https://github.com/user-attachments/assets/6e395870-75ae-42fc-a4d9-da1fb30f5e3f" />
-<img width="585" height="1266" alt="IMG_9688" src="https://github.com/user-attachments/assets/e3dee0f4-ac2e-44e8-a6f6-103a74f8cac1" />
+| Screen 1 | Screen 2 | Screen 3 | Screen 4 |
+| :---: | :---: | :---: | :---: |
+| <img width="220" alt="IMG_9685" src="https://github.com/user-attachments/assets/c876850d-8f73-4a5d-a8f4-18aabb92bcc3" /> | <img width="220" alt="IMG_9686" src="https://github.com/user-attachments/assets/5f9b285a-b91a-4797-96ff-ffff82e8a171" /> | <img width="220" alt="IMG_9687" src="https://github.com/user-attachments/assets/6e395870-75ae-42fc-a4d9-da1fb30f5e3f" /> | <img width="220" alt="IMG_9688" src="https://github.com/user-attachments/assets/e3dee0f4-ac2e-44e8-a6f6-103a74f8cac1" /> |
 
 
 ## Features
