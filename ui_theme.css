@@ -1,109 +1,415 @@
-/* Home Helper: one lightweight theme; native Streamlit sidebar and widgets. */
+
+/* =========================================================
+   HOME HELPER — OPTIMIZED UI THEME
+   =========================================================
+
+   Lightweight CSS for Streamlit and mobile PWA.
+
+   - Native Streamlit sidebar
+   - Original Home Helper background image
+   - Visible input borders in all forms
+   - Green user-entered text
+   - Grey placeholder text
+   - No expensive blur or animation effects
+   - Responsive Android and iPhone layout
+
+   ========================================================= */
+
+
+/* =========================================================
+   1. THEME COLOURS
+   ========================================================= */
+
 :root {
-  --hh-green: #047857;
-  --hh-accent: #10b981;
-  --hh-soft: #e6f9f3;
-  --hh-border: #cbd5e1;
-  --hh-ink: #0f172a;
-  --hh-muted: #475569;
+    --hh-green: #047857;
+    --hh-accent: #10b981;
+    --hh-soft: #e6f9f3;
+
+    --hh-border: #94a3b8;
+    --hh-ink: #0f172a;
+    --hh-muted: #475569;
 }
+
+
+/* =========================================================
+   2. APPLICATION BACKGROUND
+   ========================================================= */
+
 .stApp {
-  color: var(--hh-ink);
-  background-color: #f8f9ff;
-  background-image: linear-gradient(rgba(255,255,255,.80), rgba(255,255,255,.80)),
-    url("https://myresearchdata.blob.core.windows.net/home-helper/HomeImage.jpg");
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-attachment: fixed;
-  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    color: var(--hh-ink);
+
+    background-color: #f8f9ff;
+
+    background-image:
+        linear-gradient(
+            rgba(255, 255, 255, 0.80),
+            rgba(255, 255, 255, 0.80)
+        ),
+        url("https://myresearchdata.blob.core.windows.net/home-helper/HomeImage.jpg");
+
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
 }
-[data-testid="stMainBlockContainer"] { max-width: 1120px; padding-top: 1.25rem; padding-bottom: 2rem; }
-[data-testid="stMarkdownContainer"] h1 { font-size: clamp(1.55rem,4vw,2rem); line-height: 1.25; }
-[data-testid="stCaptionContainer"] { color: var(--hh-muted); }
-/* No backdrop-filter, animated shadows, filters, or expensive broad selectors. */
+
+
+/* =========================================================
+   3. MAIN LAYOUT
+   ========================================================= */
+
+[data-testid="stMainBlockContainer"] {
+    max-width: 1120px;
+
+    padding-top: 1.25rem;
+    padding-bottom: 2rem;
+}
+
+[data-testid="stMarkdownContainer"] h1 {
+    font-size: clamp(1.55rem, 4vw, 2rem);
+    line-height: 1.25;
+}
+
+[data-testid="stCaptionContainer"] {
+    color: var(--hh-muted);
+}
+
+
+/* =========================================================
+   4. FORMS AND CARDS
+   ========================================================= */
+
 [data-testid="stForm"],
 [data-testid="stExpander"],
 [data-testid="stVerticalBlockBorderWrapper"] {
-  background: #fff;
-  border: 1px solid #e2e8f0;
-  border-radius: 14px;
+    background: #ffffff;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 14px;
 }
-[data-testid="stExpander"] summary { min-height: 44px; }
-/* Borders belong on Streamlit/BaseWeb input wrappers, not only the inner input. */
-[data-testid="stTextInput"] [data-baseweb="input"],
-[data-testid="stDateInput"] [data-baseweb="input"],
-[data-testid="stTimeInput"] [data-baseweb="input"],
-[data-testid="stTextArea"] [data-baseweb="textarea"],
+
+[data-testid="stExpander"] summary {
+    min-height: 44px;
+}
+
+
+/* =========================================================
+   5. INPUT FIELDS — ALWAYS VISIBLE BORDERS
+   =========================================================
+
+   Apply borders to Streamlit's BaseWeb input wrappers.
+
+   !important ensures that the borders remain visible
+   even when Streamlit applies its component styles.
+
+   ========================================================= */
+
+
+/* Text inputs, including password fields */
+
+[data-testid="stTextInput"] [data-baseweb="input"] {
+    background-color: #ffffff !important;
+
+    border: 1px solid var(--hh-border) !important;
+
+    border-radius: 10px !important;
+
+    box-shadow: none !important;
+
+    min-height: 46px;
+}
+
+
+/* Multiline text areas */
+
+[data-testid="stTextArea"] [data-baseweb="textarea"] {
+    background-color: #ffffff !important;
+
+    border: 1px solid var(--hh-border) !important;
+
+    border-radius: 10px !important;
+
+    box-shadow: none !important;
+}
+
+
+/* Date input fields */
+
+[data-testid="stDateInput"] [data-baseweb="input"] {
+    background-color: #ffffff !important;
+
+    border: 1px solid var(--hh-border) !important;
+
+    border-radius: 10px !important;
+
+    box-shadow: none !important;
+
+    min-height: 46px;
+}
+
+
+/* Time input fields */
+
+[data-testid="stTimeInput"] [data-baseweb="input"] {
+    background-color: #ffffff !important;
+
+    border: 1px solid var(--hh-border) !important;
+
+    border-radius: 10px !important;
+
+    box-shadow: none !important;
+
+    min-height: 46px;
+}
+
+
+/* Select boxes and dropdowns */
+
 [data-testid="stSelectbox"] [data-baseweb="select"] > div {
-  background: #fff;
-  border: 1px solid var(--hh-border);
-  border-radius: 10px;
-  box-shadow: none;
+    background-color: #ffffff !important;
+
+    border: 1px solid var(--hh-border) !important;
+
+    border-radius: 10px !important;
+
+    box-shadow: none !important;
+
+    min-height: 46px;
 }
-[data-testid="stTextInput"] [data-baseweb="input"],
-[data-testid="stDateInput"] [data-baseweb="input"],
-[data-testid="stTimeInput"] [data-baseweb="input"],
-[data-testid="stSelectbox"] [data-baseweb="select"] > div { min-height: 46px; }
+
+
+/* =========================================================
+   6. FOCUSED INPUTS
+   =========================================================
+
+   Default: visible grey border.
+
+   Focused: green border with a subtle focus ring.
+
+   ========================================================= */
+
 [data-testid="stTextInput"] [data-baseweb="input"]:focus-within,
+[data-testid="stTextArea"] [data-baseweb="textarea"]:focus-within,
 [data-testid="stDateInput"] [data-baseweb="input"]:focus-within,
 [data-testid="stTimeInput"] [data-baseweb="input"]:focus-within,
-[data-testid="stTextArea"] [data-baseweb="textarea"]:focus-within,
 [data-testid="stSelectbox"] [data-baseweb="select"] > div:focus-within {
-  border-color: var(--hh-green);
-  box-shadow: 0 0 0 2px rgba(23,107,91,.12);
+    border-color: var(--hh-green) !important;
+
+    box-shadow:
+        0 0 0 2px rgba(23, 107, 91, 0.12) !important;
 }
+
+
+/* =========================================================
+   7. USER-ENTERED TEXT — GREEN
+   ========================================================= */
+
 [data-testid="stTextInput"] input,
 [data-testid="stTextArea"] textarea,
 [data-testid="stDateInput"] input,
 [data-testid="stTimeInput"] input {
-  color: var(--hh-green) !important;
-  -webkit-text-fill-color: var(--hh-green) !important;
-  caret-color: var(--hh-green);
-  background-color: transparent;
-  font-size: 16px;
+    color: var(--hh-green) !important;
+
+    -webkit-text-fill-color: var(--hh-green) !important;
+
+    caret-color: var(--hh-green) !important;
+
+    background-color: transparent !important;
+
+    font-size: 16px;
 }
+
+
+/* Dropdown selected values */
+
+[data-testid="stSelectbox"] [data-baseweb="select"] {
+    color: var(--hh-green) !important;
+}
+
+
+/* =========================================================
+   8. PLACEHOLDER TEXT — GREY
+   ========================================================= */
+
 [data-testid="stTextInput"] input::placeholder,
 [data-testid="stTextArea"] textarea::placeholder {
-  color: #94a3b8 !important;
-  -webkit-text-fill-color: #94a3b8 !important;
-  opacity: 1;
+    color: #94a3b8 !important;
+
+    -webkit-text-fill-color: #94a3b8 !important;
+
+    opacity: 1 !important;
 }
-[data-testid="stSelectbox"] [data-baseweb="select"] { color: var(--hh-green); }
+
+
+/* =========================================================
+   9. BUTTONS
+   ========================================================= */
+
 .stButton > button,
-.stFormSubmitButton > button { min-height: 44px; border-radius: 10px; font-weight: 650; }
+.stFormSubmitButton > button {
+    min-height: 44px;
+
+    border-radius: 10px;
+
+    font-weight: 650;
+}
+
+
+/* Primary buttons */
+
 .stButton > button[kind="primary"],
 .stFormSubmitButton > button[kind="primary"] {
-  background: var(--hh-accent);
-  border-color: var(--hh-accent);
-  color: #fff;
+    background: var(--hh-accent);
+
+    border-color: var(--hh-accent);
+
+    color: #ffffff;
 }
+
+
+/* Primary button hover */
+
 .stButton > button[kind="primary"]:hover,
 .stFormSubmitButton > button[kind="primary"]:hover {
-  background: var(--hh-green);
-  border-color: var(--hh-green);
+    background: var(--hh-green);
+
+    border-color: var(--hh-green);
 }
+
+
+/* Keyboard accessibility */
+
 .stButton > button:focus-visible,
 .stFormSubmitButton > button:focus-visible,
-a:focus-visible { outline: 2px solid var(--hh-green); outline-offset: 2px; }
-[data-testid="stPageLink-NavLink"] {
-  min-height: 48px;
-  padding: .65rem .8rem;
-  background: #fff;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
+a:focus-visible {
+    outline: 2px solid var(--hh-green);
+
+    outline-offset: 2px;
 }
-[data-testid="stPageLink-NavLink"]:hover { background: var(--hh-soft); }
-[data-testid="stCheckbox"] label { min-height: 44px; align-items: center; }
-[data-testid="stCheckbox"] input { accent-color: var(--hh-accent); }
-[data-baseweb="tab"] { min-height: 44px; }
-[data-testid="stSidebar"] { background: #fff; }
-[data-testid="stSidebarNav"] a { min-height: 46px; }
-[data-testid="stSidebarNav"] a:hover { background: var(--hh-soft); }
-/* Keep obsolete bottom nav hidden even if a stale widget remains. */
-.st-key-hh_bottom_nav { display: none !important; }
+
+
+/* =========================================================
+   10. PAGE LINKS
+   ========================================================= */
+
+[data-testid="stPageLink-NavLink"] {
+    min-height: 48px;
+
+    padding: 0.65rem 0.8rem;
+
+    background: #ffffff;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 10px;
+}
+
+[data-testid="stPageLink-NavLink"]:hover {
+    background: var(--hh-soft);
+}
+
+
+/* =========================================================
+   11. CHECKBOXES
+   ========================================================= */
+
+[data-testid="stCheckbox"] label {
+    min-height: 44px;
+
+    align-items: center;
+}
+
+[data-testid="stCheckbox"] input {
+    accent-color: var(--hh-accent);
+}
+
+
+/* =========================================================
+   12. TABS
+   ========================================================= */
+
+[data-baseweb="tab"] {
+    min-height: 44px;
+}
+
+
+/* =========================================================
+   13. NATIVE STREAMLIT SIDEBAR
+   ========================================================= */
+
+[data-testid="stSidebar"] {
+    background: #ffffff;
+}
+
+[data-testid="stSidebarNav"] a {
+    min-height: 46px;
+}
+
+[data-testid="stSidebarNav"] a:hover {
+    background: var(--hh-soft);
+}
+
+
+/* =========================================================
+   14. HIDE OBSOLETE BOTTOM NAVIGATION
+   ========================================================= */
+
+.st-key-hh_bottom_nav {
+    display: none !important;
+}
+
+
+/* =========================================================
+   15. MOBILE OPTIMIZATION
+   ========================================================= */
+
 @media (max-width: 768px) {
-  .stApp { background-position: 58% center; background-attachment: scroll; }
-  [data-testid="stMainBlockContainer"] { padding: 1rem .85rem 2rem; }
-  [data-testid="stHorizontalBlock"] { gap: .4rem; }
+
+    .stApp {
+        background-position: 58% center;
+
+        background-attachment: scroll;
+    }
+
+    [data-testid="stMainBlockContainer"] {
+        padding: 1rem 0.85rem 2rem;
+    }
+
+    [data-testid="stHorizontalBlock"] {
+        gap: 0.4rem;
+    }
+
+    /* Prevent automatic input zoom on iPhone Safari */
+
+    [data-testid="stTextInput"] input,
+    [data-testid="stTextArea"] textarea,
+    [data-testid="stDateInput"] input,
+    [data-testid="stTimeInput"] input {
+        font-size: 16px !important;
+    }
+
+}
+
+
+/* =========================================================
+   16. REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .stButton > button,
+    .stFormSubmitButton > button {
+        transition: none !important;
+
+        transform: none !important;
+    }
+
 }
