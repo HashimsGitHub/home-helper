@@ -1,24 +1,7 @@
 
-/* =========================================================
-   HOME HELPER — MINIMAL THEME
-   =========================================================
+/* Home Helper — Minimal CSS */
 
-   Use Streamlit's native styling for all UI components.
-
-   No custom overrides for:
-   - Text inputs and text areas
-   - Date and time inputs
-   - Select boxes and dropdowns
-   - Buttons and checkboxes
-   - Forms and expanders
-   - Navigation and sidebar
-   - Tabs and other Streamlit widgets
-
-   ========================================================= */
-
-
-/* Original Home Helper background image */
-
+/* Original background image */
 .stApp {
     background-image:
         linear-gradient(
@@ -33,14 +16,26 @@
     background-attachment: fixed;
 }
 
+/* User-entered text: green */
+[data-testid="stTextInput"] input,
+[data-testid="stTextArea"] textarea,
+[data-testid="stDateInput"] input,
+[data-testid="stTimeInput"] input {
+    color: #047857 !important;
+    -webkit-text-fill-color: #047857 !important;
+}
 
-/* Mobile background positioning */
+/* Keep placeholder text at Streamlit's default colour */
+[data-testid="stTextInput"] input::placeholder,
+[data-testid="stTextArea"] textarea::placeholder {
+    color: #94a3b8 !important;
+    -webkit-text-fill-color: #94a3b8 !important;
+}
 
+/* Mobile background */
 @media (max-width: 768px) {
-
     .stApp {
         background-position: 58% center;
         background-attachment: scroll;
     }
-
 }
