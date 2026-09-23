@@ -33,14 +33,13 @@ tasks are linked to your account, so you will only see your own records.
 3. Enter your user name and 4-digit PIN.
 4. Select **Sign in**.
 
-Home Helper remembers your account on that browser for up to 30 days. You
-should normally stay signed in after refreshing the page, closing and reopening
-the PWA, or after the Streamlit app restarts.
+For speed and reliability, Home Helper asks you to sign in whenever a new app
+session starts. Entering the same user name and PIN on another phone, tablet,
+or computer opens the same grocery list, appointments, and tasks. Changes are
+stored centrally and shared across those devices.
 
 When you have finished, select **Sign out** at the top of the app—especially
-when using a shared phone or computer. Signing out removes the remembered
-session from that device. You may need to sign in again if you use private
-browsing or clear your browser cookies.
+when using a shared phone or computer.
 
 ## Install on Android
 

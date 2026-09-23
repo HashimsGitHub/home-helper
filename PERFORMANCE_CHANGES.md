@@ -13,6 +13,9 @@ The app keeps Turso and reduces avoidable work in the Streamlit execution path.
 - Immediately clears the relevant list and dashboard caches after a write, so
   the user still sees their change without waiting for the cache to expire.
 - Preserves `user_id` filters on every read, update, and delete operation.
+- Avoids persistent-login cookie components and session-token database queries.
+- Supports concurrent sessions for the same `user_id`, allowing multiple
+  devices to share the same centrally stored records.
 
 ## Streamlit reruns
 

@@ -8,7 +8,6 @@
 - requirements.txt has no non-existent versions (libsql==0.5.3 does NOT exist)
 - Streamlit Python version is 3.12 (NOT 3.14)
 - streamlit-calendar version is compatible with pinned Streamlit
-- streamlit-cookies-controller==0.0.4 is installed for persistent login cookies
 - .env is in .gitignore; secrets are in Streamlit Cloud Secrets
 - database.py reads st.secrets first, .env as fallback
 - st.Page paths point to files that exist in GitHub
@@ -74,7 +73,6 @@ requirements.txt:
   libsql==0.1.11
   python-dotenv==1.0.1
   streamlit-calendar>=1.3.1
-  streamlit-cookies-controller==0.0.4
   pandas>=2.2.0
 
 ## 16. Do Not Do
@@ -126,14 +124,13 @@ runOnSave = false
 The non-theme configuration change takes effect after Streamlit restarts or a
 new Community Cloud deployment begins.
 
-## 21. Remembered login is not a data-cache problem
-`st.session_state` is tied to a Streamlit WebSocket and is reset when the PWA,
-tab, or browser creates a new connection. `st.cache_data` is server-side and
-may be shared across users, so never use a cached value as proof of identity.
+## 21. Prefer session-only login for this app
+`st.session_state` is tied to a Streamlit connection and is reset when the PWA,
+tab, or browser creates a new session. For this small household app, asking for
+the short username and PIN again is faster and more reliable than loading a
+custom browser-cookie component and querying persistent session tokens.
 
-Keep the random 30-day token in a browser cookie, store only its SHA-256 hash
-and expiry in Turso, and rebuild `st.session_state` after validating that token.
-Use `st.context.cookies` to read the request cookie and
-`streamlit-cookies-controller==0.0.4` to set or remove it. The previous
-`components.html` script that wrote `window.parent.document.cookie` was not
-reliable in desktop browsers or the iPhone installed PWA.
+Never use `st.cache_data` as proof of identity because cached data can be
+shared. Use it only for user-keyed database reads. Concurrent logins are safe:
+two devices using the same username and PIN receive the same `user_id`, while
+each device keeps its own independent Streamlit session and database connection.

@@ -1,7 +1,4 @@
-import hashlib
 import os
-import secrets
-import time
 
 import libsql
 import streamlit as st
@@ -12,7 +9,6 @@ load_dotenv()
 
 _CONNECTION_KEY = "_homehelper_db_connection"
 CACHE_TTL_SECONDS = 5
-PERSISTENT_SESSION_DAYS = 30
 
 
 class UsernameTakenError(ValueError):
@@ -142,13 +138,6 @@ def init_db():
                 created_at TEXT DEFAULT CURRENT_TIMESTAMP,
                 user_id INTEGER REFERENCES homehelper_users(id)
             );
-            CREATE TABLE IF NOT EXISTS homehelper_sessions (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                user_id INTEGER NOT NULL REFERENCES homehelper_users(id),
-                token_hash TEXT NOT NULL UNIQUE,
-                expires_at INTEGER NOT NULL,
-                created_at TEXT DEFAULT CURRENT_TIMESTAMP
-            );
             """
         )
 
@@ -160,15 +149,7 @@ def init_db():
             CREATE INDEX IF NOT EXISTS idx_grocery_user ON grocery(user_id);
             CREATE INDEX IF NOT EXISTS idx_appointments_user ON appointments(user_id);
             CREATE INDEX IF NOT EXISTS idx_tasks_user ON tasks(user_id);
-            CREATE INDEX IF NOT EXISTS idx_sessions_user
-                ON homehelper_sessions(user_id);
-            CREATE INDEX IF NOT EXISTS idx_sessions_expiry
-                ON homehelper_sessions(expires_at);
             """
-        )
-        connection.execute(
-            "DELETE FROM homehelper_sessions WHERE expires_at <= ?",
-            (int(time.time()),),
         )
         connection.commit()
     finally:
@@ -219,67 +200,6 @@ def authenticate_user(username, pin):
             (username.strip(), pin),
         ).fetchone()
         return tuple(row) if row else None
-    finally:
-        _release_connection(connection)
-
-
-# ---------- PERSISTENT SESSIONS ----------
-def _hash_session_token(token):
-    return hashlib.sha256(token.encode("utf-8")).hexdigest()
-
-
-def create_persistent_session(user_id):
-    """Create an opaque 30-day browser-session token for a user."""
-    token = secrets.token_urlsafe(32)
-    expires_at = int(time.time()) + (PERSISTENT_SESSION_DAYS * 24 * 60 * 60)
-    connection = get_connection()
-    try:
-        connection.execute(
-            "DELETE FROM homehelper_sessions WHERE expires_at <= ?",
-            (int(time.time()),),
-        )
-        connection.execute(
-            """INSERT INTO homehelper_sessions (user_id, token_hash, expires_at)
-               VALUES (?, ?, ?)""",
-            (user_id, _hash_session_token(token), expires_at),
-        )
-        connection.commit()
-        return token
-    finally:
-        _release_connection(connection)
-
-
-def restore_persistent_session(token):
-    """Return the token's active user, or None when missing, invalid, or expired."""
-    if not isinstance(token, str) or not token:
-        return None
-
-    connection = get_connection()
-    try:
-        row = connection.execute(
-            """SELECT users.id, users.username
-               FROM homehelper_sessions AS sessions
-               JOIN homehelper_users AS users ON users.id = sessions.user_id
-               WHERE sessions.token_hash = ? AND sessions.expires_at > ?""",
-            (_hash_session_token(token), int(time.time())),
-        ).fetchone()
-        return tuple(row) if row else None
-    finally:
-        _release_connection(connection)
-
-
-def revoke_persistent_session(token):
-    """Revoke one remembered browser session without affecting other devices."""
-    if not isinstance(token, str) or not token:
-        return
-
-    connection = get_connection()
-    try:
-        connection.execute(
-            "DELETE FROM homehelper_sessions WHERE token_hash = ?",
-            (_hash_session_token(token),),
-        )
-        connection.commit()
     finally:
         _release_connection(connection)
 
