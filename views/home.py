@@ -82,4 +82,3 @@ if pending_grocery:
             quantity = f" · {item[2]}" if item[2] else ""
             st.write(f"• {item[1]}{quantity}")
 
-st.caption("Tip: add Home Helper to your phone's Home Screen for app-like access.")
