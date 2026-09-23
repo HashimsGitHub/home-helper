@@ -41,33 +41,31 @@ stored centrally and shared across those devices.
 When you have finished, select **Sign out** at the top of the app—especially
 when using a shared phone or computer.
 
-## Install on Android
+## Install on Mobile
 
-You must use **Google Chrome** to install Home Helper on an Android phone.
+On **Google Chrome** or **Safari** to install Home Helper
 
-1. Open **Google Chrome**.
-2. Go to [https://homelist.streamlit.app/](https://homelist.streamlit.app/).
-3. Wait for the **Install App** pop-up message.
-4. Select **Install** and accept the installation prompt.
-5. The Home Helper icon will be added to your phone's Home Screen.
-6. Open Home Helper from its icon just like any other app.
+1. Go to [https://homelist.streamlit.app/](https://homelist.streamlit.app/).
+2. Wait for the **Install App** pop-up message (for Chrome on Android)
+3. Select **Install** and accept the installation prompt.
+4. The Home Helper icon will be added to your phone's Home Screen.
+5. Open Home Helper from its icon just like any other app.
 
-If the installation pop-up does not appear, open Chrome's **three-dot menu**
-and select **Install app** or **Add to Home screen**.
+If the installation pop-up does not appear, open Chrome's / Safari's **Share** option
 
-## Install on iPhone
+6. Scroll down and select **Add to Home Screen**.
+6. Enable the **Web Application** toggle switch.
+7. Rename from Streamlit to Home Helper
+8. Select **Add**.
+7. The Home Helper icon will be added to your Phone's Home Screen.
 
-You must use **Safari** to add Home Helper to an iPhone.
+<img width="585" height="1266" alt="IMG_9685" src="https://github.com/user-attachments/assets/c876850d-8f73-4a5d-a8f4-18aabb92bcc3" />
+<img width="585" height="1266" alt="IMG_9686" src="https://github.com/user-attachments/assets/5f9b285a-b91a-4797-96ff-ffff82e8a171" />
+<img width="585" height="1266" alt="IMG_9687" src="https://github.com/user-attachments/assets/6e395870-75ae-42fc-a4d9-da1fb30f5e3f" />
+<img width="585" height="1266" alt="IMG_9688" src="https://github.com/user-attachments/assets/e3dee0f4-ac2e-44e8-a6f6-103a74f8cac1" />
 
-1. Open **Safari**.
-2. Go to [https://homelist.streamlit.app/](https://homelist.streamlit.app/).
-3. Select the **Share** button.
-4. Scroll down and select **Add to Home Screen**.
-5. Enable the **Web Application** toggle switch.
-6. Select **Add**.
-7. The Home Helper icon will be added to your iPhone's Home Screen.
 
-## Using Home Helper
+## Features
 
 ### Grocery list
 
