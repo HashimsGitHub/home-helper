@@ -26,15 +26,14 @@ def render_item(row):
             if details:
                 st.caption(" · ".join(details))
 
-        with action_col:
-            with st.popover("More", use_container_width=True):
-                st.button(
-                    "Delete item",
-                    key=f"delete_grocery_{rid}",
-                    use_container_width=True,
-                    on_click=delete_grocery,
-                    args=(USER_ID, rid),
-                )
+    with action_col:
+        st.button(
+            "Delete",
+            key=f"delete_grocery_{rid}",
+            use_container_width=True,
+            on_click=delete_grocery,
+            args=(USER_ID, rid),
+        )
 
 
 st.page_link("views/home.py", label="Home", icon="🏠")

@@ -30,15 +30,14 @@ def render_task(row):
             if description:
                 st.write(description)
 
-        with action_col:
-            with st.popover("More", use_container_width=True):
-                st.button(
-                    "Delete task",
-                    key=f"delete_task_{rid}",
-                    use_container_width=True,
-                    on_click=delete_task,
-                    args=(USER_ID, rid),
-                )
+    with action_col:
+        st.button(
+            "Delete",
+            key=f"delete_task_{rid}",
+            use_container_width=True,
+            on_click=delete_task,
+            args=(USER_ID, rid),
+        )
 
 
 st.page_link("views/home.py", label="Home", icon="🏠")

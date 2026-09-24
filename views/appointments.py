@@ -19,14 +19,13 @@ def render_appointment(row):
             st.caption(f"📍 {location}")
         if description:
             st.write(description)
-        with st.popover("Appointment actions"):
-            st.button(
-                "Delete appointment",
-                key=f"delete_appointment_{rid}",
-                use_container_width=True,
-                on_click=delete_appointment,
-                args=(USER_ID, rid),
-            )
+        st.button(
+            "Delete",
+            key=f"delete_appointment_{rid}",
+            use_container_width=True,
+            on_click=delete_appointment,
+            args=(USER_ID, rid),
+        )
 
 
 st.page_link("views/home.py", label="Home", icon="🏠")
