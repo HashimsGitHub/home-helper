@@ -1,4 +1,3 @@
-
 /* =========================================================
    HOME HELPER — MINIMAL UI THEME
    =========================================================
@@ -9,13 +8,16 @@
    - Original background image
    - Green user-entered text
    - Grey placeholder text
-   - Slightly larger sidebar navigation
-   - Slightly larger Home page navigation items
+   - Streamlit sidebar hidden
+   - Home page navigation looks clearly clickable
+   - Larger navigation icons and labels
 
    ========================================================= */
 
 
-/* 1. Original background image */
+/* =========================================================
+   1. ORIGINAL BACKGROUND IMAGE
+   ========================================================= */
 
 .stApp {
     background-image:
@@ -32,7 +34,9 @@
 }
 
 
-/* 2. User-entered text stays green */
+/* =========================================================
+   2. USER-ENTERED TEXT — GREEN
+   ========================================================= */
 
 [data-testid="stTextInput"] input,
 [data-testid="stTextArea"] textarea,
@@ -43,7 +47,9 @@
 }
 
 
-/* 3. Placeholder text stays grey */
+/* =========================================================
+   3. PLACEHOLDER TEXT — GREY
+   ========================================================= */
 
 [data-testid="stTextInput"] input::placeholder,
 [data-testid="stTextArea"] textarea::placeholder {
@@ -53,71 +59,149 @@
 
 
 /* =========================================================
-   4. NATIVE SIDEBAR NAVIGATION
+   4. DISABLE STREAMLIT SIDEBAR
    ========================================================= */
 
-/* Slightly larger navigation labels */
+/* Hide the sidebar itself */
 
-[data-testid="stSidebarNav"] a,
-[data-testid="stSidebarNav"] a span,
-[data-testid="stSidebarNav"] a p {
-    font-size: 1.05rem !important;
-    line-height: 1.5;
+[data-testid="stSidebar"] {
+    display: none !important;
 }
 
 
-/* Slightly larger navigation icons */
+/* Hide sidebar open / collapse button */
 
-[data-testid="stSidebarNav"] a svg,
-[data-testid="stSidebarNav"] a [data-testid="stIcon"],
-[data-testid="stSidebarNav"] a [data-testid="stIconEmoji"] {
-    width: 22px !important;
-    height: 22px !important;
-    font-size: 22px !important;
-}
-
-
-/* Comfortable navigation touch targets */
-
-[data-testid="stSidebarNav"] a {
-    min-height: 46px;
+[data-testid="collapsedControl"] {
+    display: none !important;
 }
 
 
 /* =========================================================
-   5. HOME PAGE NAVIGATION ITEMS
+   5. HOME PAGE NAVIGATION BUTTONS
+   =========================================================
+
+   These are native st.page_link controls.
+
+   Make them visually obvious as buttons because the
+   sidebar navigation is now disabled.
+
    ========================================================= */
 
-/* Slightly larger item labels */
+[data-testid="stPageLink-NavLink"] {
 
-[data-testid="stPageLink-NavLink"],
-[data-testid="stPageLink-NavLink"] span,
-[data-testid="stPageLink-NavLink"] p {
-    font-size: 1.05rem !important;
-    line-height: 1.5;
+    /* Button/card appearance */
+
+    background-color: #ffffff !important;
+
+    border: 2px solid #10b981 !important;
+
+    border-radius: 14px !important;
+
+    /* Comfortable touch target */
+
+    min-height: 58px !important;
+
+    padding: 0.8rem 1rem !important;
+
+    /* Slight depth so users recognise it as interactive */
+
+    box-shadow:
+        0 2px 5px rgba(15, 23, 42, 0.08) !important;
+
+    /* Text */
+
+    color: #064e3b !important;
+
+    font-weight: 650 !important;
+
+    text-decoration: none !important;
+
+    /* Small interaction animation only */
+
+    transition:
+        background-color 0.12s ease,
+        border-color 0.12s ease,
+        transform 0.08s ease !important;
 }
 
 
-/* Slightly larger Home page icons */
+/* =========================================================
+   6. HOME NAVIGATION TEXT
+   ========================================================= */
+
+[data-testid="stPageLink-NavLink"] span,
+[data-testid="stPageLink-NavLink"] p {
+
+    font-size: 1.08rem !important;
+
+    font-weight: 650 !important;
+
+    line-height: 1.4 !important;
+
+    color: #064e3b !important;
+}
+
+
+/* =========================================================
+   7. HOME NAVIGATION ICONS
+   ========================================================= */
 
 [data-testid="stPageLink-NavLink"] svg,
 [data-testid="stPageLink-NavLink"] [data-testid="stIcon"],
 [data-testid="stPageLink-NavLink"] [data-testid="stIconEmoji"] {
-    width: 22px !important;
-    height: 22px !important;
-    font-size: 22px !important;
-}
 
+    width: 25px !important;
 
-/* Comfortable Home page navigation touch targets */
+    height: 25px !important;
 
-[data-testid="stPageLink-NavLink"] {
-    min-height: 48px;
+    font-size: 25px !important;
 }
 
 
 /* =========================================================
-   6. MOBILE BACKGROUND
+   8. HOVER STATE — DESKTOP
+   ========================================================= */
+
+[data-testid="stPageLink-NavLink"]:hover {
+
+    background-color: #ecfdf5 !important;
+
+    border-color: #047857 !important;
+
+    box-shadow:
+        0 3px 8px rgba(15, 23, 42, 0.12) !important;
+}
+
+
+/* =========================================================
+   9. PRESS / TAP FEEDBACK
+   ========================================================= */
+
+[data-testid="stPageLink-NavLink"]:active {
+
+    background-color: #d1fae5 !important;
+
+    transform: translateY(1px) !important;
+
+    box-shadow:
+        0 1px 3px rgba(15, 23, 42, 0.10) !important;
+}
+
+
+/* =========================================================
+   10. KEYBOARD ACCESSIBILITY
+   ========================================================= */
+
+[data-testid="stPageLink-NavLink"]:focus-visible {
+
+    outline: 3px solid rgba(16, 185, 129, 0.35) !important;
+
+    outline-offset: 2px !important;
+}
+
+
+/* =========================================================
+   11. MOBILE OPTIMIZATION
    ========================================================= */
 
 @media (max-width: 768px) {
@@ -125,6 +209,56 @@
     .stApp {
         background-position: 58% center;
         background-attachment: scroll;
+    }
+
+
+    /*
+       Make the main navigation even easier to tap
+       with a thumb on Android/iPhone.
+    */
+
+    [data-testid="stPageLink-NavLink"] {
+
+        min-height: 62px !important;
+
+        padding: 0.85rem 1rem !important;
+
+        border-radius: 14px !important;
+    }
+
+
+    [data-testid="stPageLink-NavLink"] span,
+    [data-testid="stPageLink-NavLink"] p {
+
+        font-size: 1.1rem !important;
+    }
+
+
+    [data-testid="stPageLink-NavLink"] svg,
+    [data-testid="stPageLink-NavLink"] [data-testid="stIcon"],
+    [data-testid="stPageLink-NavLink"] [data-testid="stIconEmoji"] {
+
+        width: 26px !important;
+
+        height: 26px !important;
+
+        font-size: 26px !important;
+    }
+
+}
+
+
+/* =========================================================
+   12. REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    [data-testid="stPageLink-NavLink"] {
+
+        transition: none !important;
+
+        transform: none !important;
     }
 
 }
