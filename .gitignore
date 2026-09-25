@@ -10,3 +10,14 @@ wordcloud_test.py
 *.keystore
 *.jks*.keystore
 *.jks
+
+# Gradle / Android build artifacts
+.gradle/
+build/
+app/build/
+
+# Bubblewrap release artifacts
+app-release-bundle.aab
+app-release-signed.apk
+app-release-signed.apk.idsig
+app-release-unsigned-aligned.apk
