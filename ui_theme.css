@@ -8,8 +8,9 @@
    - Grey placeholder text
    - Streamlit sidebar hidden
    - Transparent navigation links
-   - Grey underlined navigation labels
+   - Grey navigation labels
    - Subtle 3D shadow for click affordance
+   - No underlines
    ========================================================= */
 
 
@@ -73,9 +74,9 @@
    5. NAVIGATION LINKS
    =========================================================
 
-   Transparent appearance with a subtle raised shadow.
-   This applies to the Home dashboard links as well as
-   the Home link on Grocery, Tasks and Appointments.
+   Transparent appearance with subtle raised shadow.
+   Applies to Home dashboard links and Home links on
+   Grocery, Tasks and Appointments pages.
 
    ========================================================= */
 
@@ -92,14 +93,6 @@
     color: #64748b !important;
 
     text-decoration: none !important;
-
-    /*
-       Subtle 3D effect.
-
-       The darker lower shadow makes the row appear
-       slightly raised from the page without creating
-       a visible card background.
-    */
 
     box-shadow:
         0 3px 0 rgba(100, 116, 139, 0.18),
@@ -126,17 +119,7 @@
 
     color: #64748b !important;
 
-    /*
-       Underline communicates that the label is clickable.
-    */
-
-    text-decoration: underline !important;
-
-    text-decoration-thickness: 1px !important;
-
-    text-underline-offset: 3px !important;
-
-    text-decoration-color: #94a3b8 !important;
+    text-decoration: none !important;
 }
 
 
@@ -175,17 +158,12 @@
 [data-testid="stPageLink-NavLink"]:hover p {
     color: #475569 !important;
 
-    text-decoration-color: #64748b !important;
+    text-decoration: none !important;
 }
 
 
 /* =========================================================
    9. PRESS / TAP EFFECT
-   =========================================================
-
-   The control moves down slightly when tapped,
-   similar to pressing a physical button.
-
    ========================================================= */
 
 [data-testid="stPageLink-NavLink"]:active {
