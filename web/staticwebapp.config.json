@@ -24,6 +24,13 @@
       "headers": {
         "Cache-Control": "no-cache"
       }
+    },
+    {
+      "route": "/.well-known/assetlinks.json",
+      "headers": {
+        "Content-Type": "application/json",
+        "Cache-Control": "no-cache"
+      }
     }
   ]
 }
