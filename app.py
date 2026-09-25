@@ -223,11 +223,20 @@ if logout_col.button("Sign out", use_container_width=True):
         st.session_state.pop(auth_key, None)
     st.rerun()
 
-# ---------- Register native top navigation ----------
+# ---------- Native Streamlit sidebar navigation disabled ----------
+# pg = st.navigation(
+#     [home_page, grocery_page, appointments_page, tasks_page],
+#     position="sidebar",
+# )
+
+# Keep pages registered, but hide Streamlit navigation.
+# Navigation is handled by the Home screen buttons and Home links on each page.
 pg = st.navigation(
     [home_page, grocery_page, appointments_page, tasks_page],
-    position="sidebar",
+    position="hidden",
 )
 
 # ---------- Run the selected page ----------
 pg.run()
+# Site Footer
+st.caption("Home Helper v4.1")
