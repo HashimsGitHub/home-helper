@@ -9,8 +9,8 @@
    - Green user-entered text
    - Grey placeholder text
    - Streamlit sidebar hidden
-   - Home page navigation looks clearly clickable
-   - Larger navigation icons and labels
+   - Sleek borderless Home page navigation
+   - Slightly larger navigation icons and labels
 
    ========================================================= */
 
@@ -62,14 +62,9 @@
    4. DISABLE STREAMLIT SIDEBAR
    ========================================================= */
 
-/* Hide the sidebar itself */
-
 [data-testid="stSidebar"] {
     display: none !important;
 }
-
-
-/* Hide sidebar open / collapse button */
 
 [data-testid="collapsedControl"] {
     display: none !important;
@@ -77,50 +72,40 @@
 
 
 /* =========================================================
-   5. HOME PAGE NAVIGATION BUTTONS
+   5. HOME PAGE NAVIGATION — SLEEK BORDERLESS STYLE
    =========================================================
 
-   These are native st.page_link controls.
+   Applies to st.page_link controls.
 
-   Make them visually obvious as buttons because the
-   sidebar navigation is now disabled.
+   Clean, lightweight appearance:
+   - No border
+   - No heavy shadow
+   - Soft translucent background
+   - Slightly larger text and icon
+   - Subtle hover/tap feedback
 
    ========================================================= */
 
 [data-testid="stPageLink-NavLink"] {
+    background: rgba(255, 255, 255, 0.72) !important;
 
-    /* Button/card appearance */
+    border: none !important;
+    border-radius: 12px !important;
 
-    background-color: #ffffff !important;
+    min-height: 56px !important;
 
-    border: 2px solid #10b981 !important;
-
-    border-radius: 14px !important;
-
-    /* Comfortable touch target */
-
-    min-height: 58px !important;
-
-    padding: 0.8rem 1rem !important;
-
-    /* Slight depth so users recognise it as interactive */
-
-    box-shadow:
-        0 2px 5px rgba(15, 23, 42, 0.08) !important;
-
-    /* Text */
+    padding: 0.75rem 0.9rem !important;
 
     color: #064e3b !important;
 
-    font-weight: 650 !important;
+    font-weight: 600 !important;
 
     text-decoration: none !important;
 
-    /* Small interaction animation only */
+    box-shadow: none !important;
 
     transition:
         background-color 0.12s ease,
-        border-color 0.12s ease,
         transform 0.08s ease !important;
 }
 
@@ -131,10 +116,9 @@
 
 [data-testid="stPageLink-NavLink"] span,
 [data-testid="stPageLink-NavLink"] p {
-
     font-size: 1.08rem !important;
 
-    font-weight: 650 !important;
+    font-weight: 600 !important;
 
     line-height: 1.4 !important;
 
@@ -149,12 +133,11 @@
 [data-testid="stPageLink-NavLink"] svg,
 [data-testid="stPageLink-NavLink"] [data-testid="stIcon"],
 [data-testid="stPageLink-NavLink"] [data-testid="stIconEmoji"] {
+    width: 24px !important;
 
-    width: 25px !important;
+    height: 24px !important;
 
-    height: 25px !important;
-
-    font-size: 25px !important;
+    font-size: 24px !important;
 }
 
 
@@ -163,13 +146,9 @@
    ========================================================= */
 
 [data-testid="stPageLink-NavLink"]:hover {
+    background: rgba(236, 253, 245, 0.90) !important;
 
-    background-color: #ecfdf5 !important;
-
-    border-color: #047857 !important;
-
-    box-shadow:
-        0 3px 8px rgba(15, 23, 42, 0.12) !important;
+    box-shadow: none !important;
 }
 
 
@@ -178,13 +157,11 @@
    ========================================================= */
 
 [data-testid="stPageLink-NavLink"]:active {
-
-    background-color: #d1fae5 !important;
+    background: rgba(209, 250, 229, 0.95) !important;
 
     transform: translateY(1px) !important;
 
-    box-shadow:
-        0 1px 3px rgba(15, 23, 42, 0.10) !important;
+    box-shadow: none !important;
 }
 
 
@@ -193,8 +170,7 @@
    ========================================================= */
 
 [data-testid="stPageLink-NavLink"]:focus-visible {
-
-    outline: 3px solid rgba(16, 185, 129, 0.35) !important;
+    outline: 2px solid rgba(16, 185, 129, 0.35) !important;
 
     outline-offset: 2px !important;
 }
@@ -211,38 +187,27 @@
         background-attachment: scroll;
     }
 
-
-    /*
-       Make the main navigation even easier to tap
-       with a thumb on Android/iPhone.
-    */
-
     [data-testid="stPageLink-NavLink"] {
+        min-height: 58px !important;
 
-        min-height: 62px !important;
+        padding: 0.8rem 0.9rem !important;
 
-        padding: 0.85rem 1rem !important;
-
-        border-radius: 14px !important;
+        border-radius: 12px !important;
     }
-
 
     [data-testid="stPageLink-NavLink"] span,
     [data-testid="stPageLink-NavLink"] p {
-
         font-size: 1.1rem !important;
     }
-
 
     [data-testid="stPageLink-NavLink"] svg,
     [data-testid="stPageLink-NavLink"] [data-testid="stIcon"],
     [data-testid="stPageLink-NavLink"] [data-testid="stIconEmoji"] {
+        width: 25px !important;
 
-        width: 26px !important;
+        height: 25px !important;
 
-        height: 26px !important;
-
-        font-size: 26px !important;
+        font-size: 25px !important;
     }
 
 }
@@ -255,7 +220,6 @@
 @media (prefers-reduced-motion: reduce) {
 
     [data-testid="stPageLink-NavLink"] {
-
         transition: none !important;
 
         transform: none !important;
