@@ -21,7 +21,7 @@ plugins {
 }
 
 def twaManifest = [
-    applicationId: 'com.homehelper.app',
+    applicationId: 'com.hashimhilal.homehelper',
     hostName: 'lively-sand-094772910.2.azurestaticapps.net', // The domain being opened in the TWA.
     launchUrl: '/', // The start path for the TWA. Must be relative to the domain.
     name: 'Home Helper', // The application name.
@@ -52,9 +52,9 @@ def twaManifest = [
 
 android {
     compileSdkVersion 36
-    namespace "com.homehelper.app"
+    namespace "com.hashimhilal.homehelper"
     defaultConfig {
-        applicationId "com.homehelper.app"
+        applicationId "com.hashimhilal.homehelper"
         minSdkVersion 21
         targetSdkVersion 36
         versionCode 1
