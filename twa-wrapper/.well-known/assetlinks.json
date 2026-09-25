@@ -7,7 +7,8 @@
       "namespace": "android_app",
       "package_name": "com.randamanagement.homehelper",
       "sha256_cert_fingerprints": [
-        "CD:1F:1C:A8:A5:5E:03:2B:57:5F:AA:54:B8:FA:79:31:7B:5F:05:BC:EA:50:CF:7C:B6:6D:8D:B8:75:4D:4D:4E"
+        "CD:1F:1C:A8:A5:5E:03:2B:57:5F:AA:54:B8:FA:79:31:7B:5F:05:BC:EA:50:CF:7C:B6:6D:8D:B8:75:4D:4D:4E",
+        "ED:60:ED:D8:4E:6E:EF:DA:23:DC:34:5C:20:33:60:F1:CC:6A:B4:A0:39:78:2F:4F:08:31:8E:13:11:BA:29:AD"
       ]
     }
   }
