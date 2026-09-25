@@ -7,3 +7,6 @@ __pycache__/
 .homehelper-performance-backup*.bak
 *.bak
 wordcloud_test.py
+*.keystore
+*.jks*.keystore
+*.jks
