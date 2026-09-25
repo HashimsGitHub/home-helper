@@ -2,16 +2,14 @@
    HOME HELPER — MINIMAL UI THEME
    =========================================================
 
-   Preserves native Streamlit widgets and performance.
-
-   Customizations:
+   - Native Streamlit widgets preserved
    - Original background image
    - Green user-entered text
    - Grey placeholder text
    - Streamlit sidebar hidden
-   - Sleek borderless Home page navigation
-   - Navigation sizing closer to original Streamlit defaults
-
+   - Transparent navigation links
+   - Grey underlined navigation labels
+   - Subtle 3D shadow for click affordance
    ========================================================= */
 
 
@@ -72,11 +70,17 @@
 
 
 /* =========================================================
-   5. HOME PAGE NAVIGATION — SLEEK BORDERLESS STYLE
+   5. NAVIGATION LINKS
+   =========================================================
+
+   Transparent appearance with a subtle raised shadow.
+   This applies to the Home dashboard links as well as
+   the Home link on Grocery, Tasks and Appointments.
+
    ========================================================= */
 
 [data-testid="stPageLink-NavLink"] {
-    background: rgba(255, 255, 255, 0.72) !important;
+    background: transparent !important;
 
     border: none !important;
     border-radius: 10px !important;
@@ -85,38 +89,59 @@
 
     padding: 0.62rem 0.8rem !important;
 
-    color: #064e3b !important;
-
-    font-weight: 600 !important;
+    color: #64748b !important;
 
     text-decoration: none !important;
 
-    box-shadow: none !important;
+    /*
+       Subtle 3D effect.
+
+       The darker lower shadow makes the row appear
+       slightly raised from the page without creating
+       a visible card background.
+    */
+
+    box-shadow:
+        0 3px 0 rgba(100, 116, 139, 0.18),
+        0 4px 7px rgba(15, 23, 42, 0.07) !important;
 
     transition:
-        background-color 0.12s ease,
-        transform 0.08s ease !important;
+        box-shadow 0.10s ease,
+        transform 0.08s ease,
+        color 0.10s ease !important;
 }
 
 
 /* =========================================================
-   6. HOME NAVIGATION TEXT
+   6. NAVIGATION TEXT
    ========================================================= */
 
 [data-testid="stPageLink-NavLink"] span,
 [data-testid="stPageLink-NavLink"] p {
     font-size: 1rem !important;
 
-    font-weight: 600 !important;
+    font-weight: 550 !important;
 
     line-height: 1.35 !important;
 
-    color: #064e3b !important;
+    color: #64748b !important;
+
+    /*
+       Underline communicates that the label is clickable.
+    */
+
+    text-decoration: underline !important;
+
+    text-decoration-thickness: 1px !important;
+
+    text-underline-offset: 3px !important;
+
+    text-decoration-color: #94a3b8 !important;
 }
 
 
 /* =========================================================
-   7. HOME NAVIGATION ICONS
+   7. NAVIGATION ICONS
    ========================================================= */
 
 [data-testid="stPageLink-NavLink"] svg,
@@ -131,26 +156,46 @@
 
 
 /* =========================================================
-   8. HOVER STATE
+   8. HOVER — DESKTOP
    ========================================================= */
 
 [data-testid="stPageLink-NavLink"]:hover {
-    background: rgba(236, 253, 245, 0.90) !important;
+    background: transparent !important;
 
-    box-shadow: none !important;
+    color: #475569 !important;
+
+    box-shadow:
+        0 4px 0 rgba(100, 116, 139, 0.20),
+        0 5px 9px rgba(15, 23, 42, 0.09) !important;
+
+    transform: translateY(-1px) !important;
+}
+
+[data-testid="stPageLink-NavLink"]:hover span,
+[data-testid="stPageLink-NavLink"]:hover p {
+    color: #475569 !important;
+
+    text-decoration-color: #64748b !important;
 }
 
 
 /* =========================================================
-   9. PRESS / TAP FEEDBACK
+   9. PRESS / TAP EFFECT
+   =========================================================
+
+   The control moves down slightly when tapped,
+   similar to pressing a physical button.
+
    ========================================================= */
 
 [data-testid="stPageLink-NavLink"]:active {
-    background: rgba(209, 250, 229, 0.95) !important;
+    background: transparent !important;
 
-    transform: translateY(1px) !important;
+    transform: translateY(2px) !important;
 
-    box-shadow: none !important;
+    box-shadow:
+        0 1px 0 rgba(100, 116, 139, 0.20),
+        0 2px 3px rgba(15, 23, 42, 0.06) !important;
 }
 
 
@@ -159,7 +204,7 @@
    ========================================================= */
 
 [data-testid="stPageLink-NavLink"]:focus-visible {
-    outline: 2px solid rgba(16, 185, 129, 0.35) !important;
+    outline: 2px solid rgba(100, 116, 139, 0.40) !important;
 
     outline-offset: 2px !important;
 }
@@ -180,8 +225,6 @@
         min-height: 52px !important;
 
         padding: 0.68rem 0.82rem !important;
-
-        border-radius: 10px !important;
     }
 
     [data-testid="stPageLink-NavLink"] span,
