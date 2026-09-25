@@ -1,99 +1,83 @@
 # Home Helper
 
-Home Helper is a simple mobile app for keeping your household organised. You
-can manage your grocery list, appointments, and household tasks in one place.
+Home Helper is a mobile-friendly household organiser for groceries,
+appointments, and tasks. The native web app is served as static files by Azure
+Static Web Apps; its Azure Functions API connects to the existing Turso
+database. The deployed app does not load or call Streamlit.
 
-## Open Home Helper
+## Run Locally
 
-Visit:
+Requirements: Node.js 20 or later, Azure Static Web Apps CLI, and Azure
+Functions Core Tools v4.
 
-### [https://homelist.streamlit.app/](https://homelist.streamlit.app/)
+Install the API dependencies:
 
-For the best experience, install Home Helper on your phone by following the
-instructions below.
+```sh
+npm --prefix api install
+```
 
-## Create your account
+Create or update the repository-root `.env` with the existing Turso connection
+values and a new session-signing secret:
 
-1. Open Home Helper.
-2. Select the **Register** tab.
-3. Enter your name. This will become your user name.
-4. Choose a memorable **4-digit PIN**.
-5. Select **Create account**.
+```dotenv
+TURSO_DATABASE_URL=libsql://your-database.turso.io
+TURSO_AUTH_TOKEN=your-turso-auth-token
+SESSION_SECRET=your-random-secret-at-least-32-bytes
+```
 
-You will be signed in automatically. Your grocery items, appointments, and
-tasks are linked to your account, so you will only see your own records.
+Generate a session secret locally with:
 
-> Choose a PIN specifically for Home Helper. Do not reuse a banking, phone, or
-> other important PIN.
+```sh
+node -e "console.log(require('node:crypto').randomBytes(32).toString('base64url'))"
+```
 
-## Sign in
+For an isolated end-to-end test, start the API against a temporary local
+SQLite database in one terminal (the empty token prevents the value in `.env`
+from being used):
 
-1. Open Home Helper.
-2. Select the **Sign in** tab.
-3. Enter your user name and 4-digit PIN.
-4. Select **Sign in**.
+```sh
+TURSO_DATABASE_URL=file:/tmp/homehelper-local.db TURSO_AUTH_TOKEN= SESSION_SECRET="$(node -e "process.stdout.write(require('node:crypto').randomBytes(32).toString('base64url'))")" func start --script-root api --port 7071 --javascript
+```
 
-For speed and reliability, Home Helper asks you to sign in whenever a new app
-session starts. Entering the same user name and PIN on another phone, tablet,
-or computer opens the same grocery list, appointments, and tasks. Changes are
-stored centrally and shared across those devices.
+Start the SWA frontend in another terminal:
 
-When you have finished, select **Sign out** at the top of the app—especially
-when using a shared phone or computer.
+```sh
+swa start web --api-devserver-url http://localhost:7071
+```
 
-## Install on Mobile
+Open `http://localhost:4280`. To test against Turso instead, add
+`SESSION_SECRET` to `.env` and start the Functions host without the temporary
+database overrides. **Those local requests read and write the shared Turso
+database.** The API creates missing tables and indexes and adds missing
+`user_id` columns on first use, matching the existing application's
+non-destructive schema setup.
 
-On **Google Chrome** or **Safari** to install Home Helper
+Run the API unit tests and syntax checks:
 
-1. Go to [https://homelist.streamlit.app/](https://homelist.streamlit.app/).
-2. Wait for the **Install App** pop-up message (for Chrome on Android)
-3. Select **Install** and accept the installation prompt.
-4. The Home Helper icon will be added to your phone's Home Screen.
-5. Open Home Helper from its icon just like any other app.
+```sh
+npm --prefix api test
+node --check api/src/functions/homehelper.js
+node --check web/app.js
+```
 
-If the installation pop-up does not appear, open Chrome's / Safari's **Share** option
+## Azure Static Web Apps
 
-6. Scroll down and select **Add to Home Screen**.
-6. Enable the **Web Application** toggle switch.
-7. Rename from Streamlit to Home Helper
-8. Select **Add**.
-7. The Home Helper icon will be added to your Phone's Home Screen.
+The GitHub Actions workflow on `feature/swa-native-app` deploys `web/` and
+`api/`. Add these application settings to the Static Web App before enabling
+the branch:
 
-| Screen 1 | Screen 2 | Screen 3 | Screen 4 |
-| :---: | :---: | :---: | :---: |
-| <img width="220" alt="IMG_9685" src="https://github.com/user-attachments/assets/c876850d-8f73-4a5d-a8f4-18aabb92bcc3" /> | <img width="220" alt="IMG_9686" src="https://github.com/user-attachments/assets/5f9b285a-b91a-4797-96ff-ffff82e8a171" /> | <img width="220" alt="IMG_9687" src="https://github.com/user-attachments/assets/6e395870-75ae-42fc-a4d9-da1fb30f5e3f" /> | <img width="220" alt="IMG_9688" src="https://github.com/user-attachments/assets/e3dee0f4-ac2e-44e8-a6f6-103a74f8cac1" /> |
+- `TURSO_DATABASE_URL`
+- `TURSO_AUTH_TOKEN`
+- `SESSION_SECRET` (at least 32 bytes; use the same value for every deployment
+   slot that should share sessions)
 
+Keep the database token and session secret in environment settings, never in
+the static `web/` directory. The workflow uses the existing
+`AZURE_STATIC_WEB_APPS_API_TOKEN_LIVELY_SAND_094772910` GitHub secret. The API
+sets an HTTP-only signed session cookie; the service worker caches only static
+files and never caches API responses.
 
-## Features
-
-### Grocery list
-
-- Add an item, quantity, and category.
-- Tick an item after buying it.
-- View purchased items in the **Purchased** tab.
-
-### Appointments
-
-- Add the appointment title, date, time, location, and optional notes.
-- Use **Upcoming** for a simple list or **Calendar** for a calendar view.
-
-### Tasks
-
-- Add a household task with a due date and priority.
-- Tick a task when it is complete.
-- View finished tasks in the **Completed** tab.
-
-## Forgot your PIN?
-
-Home Helper does not provide automatic PIN reset. Contact the Home Helper
-administrator, who can retrieve your PIN for you.
-
-## Need help?
-
-If the app does not open correctly:
-
-1. Confirm that your phone is connected to the internet.
-2. Close and reopen Home Helper.
-3. Open [https://homelist.streamlit.app/](https://homelist.streamlit.app/) in
-   Chrome on Android or Safari on iPhone.
-4. Contact the Home Helper administrator if the problem continues.
+The existing Android TWA points at the Static Web App domain, so it can keep
+that domain when the SWA is pointed at this branch. The previous Python and
+Streamlit sources remain in the repository for reference during migration, but
+the new workflow does not build or deploy them.

@@ -1,0 +1,19 @@
+{
+  "name": "Home Helper",
+  "short_name": "Home Helper",
+  "description": "A shared home organiser for groceries, appointments and tasks.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#f2f5f1",
+  "theme_color": "#175548",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -11,6 +11,10 @@ wordcloud_test.py
 *.jks*.keystore
 *.jks
 
+# Azure Static Web Apps API dependencies
+api/node_modules/
+api/local.settings.json
+
 # Gradle / Android build artifacts
 .gradle/
 build/
