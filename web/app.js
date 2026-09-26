@@ -8,6 +8,8 @@ const views = [
 ];
 const state = {
   user: null,
+  dashboardData: null,
+  dashboardLoadedAt: 0,
   view: "home",
   authMode: "login",
   groceryFilter: "active",
@@ -43,12 +45,64 @@ async function api(path, options = {}) {
   const result = await response.json().catch(() => ({}));
   if (!response.ok) {
     if (response.status === 401 && state.user) {
+      invalidateDashboard();
       state.user = null;
       state.authMode = "login";
     }
     throw new Error(result.error || "The request could not be completed.");
   }
   return result;
+}
+
+function cachedDashboard() {
+  if (!state.dashboardData || Date.now() - state.dashboardLoadedAt >= 5000) return null;
+  return state.dashboardData;
+}
+
+async function loadDashboard() {
+  const cached = cachedDashboard();
+  if (cached) return cached;
+  state.dashboardData = await api("dashboard");
+  state.dashboardLoadedAt = Date.now();
+  return state.dashboardData;
+}
+
+function invalidateDashboard() {
+  state.dashboardData = null;
+  state.dashboardLoadedAt = 0;
+}
+
+function groceriesFromDashboard(data) {
+  return data.groceries.map((item) => ({
+    id: item.id,
+    item: item.title,
+    quantity: item.description,
+    category: item.label,
+    purchased: item.completed,
+    created_at: item.date_value,
+  }));
+}
+
+function appointmentsFromDashboard(data) {
+  return data.appointments.map((item) => ({
+    id: item.id,
+    title: item.title,
+    description: item.description,
+    start_time: item.date_value,
+    end_time: item.end_time,
+    location: item.location,
+  }));
+}
+
+function tasksFromDashboard(data) {
+  return data.tasks.map((task) => ({
+    id: task.id,
+    title: task.title,
+    description: task.description,
+    priority: task.label,
+    due_date: task.date_value,
+    completed: task.completed,
+  }));
 }
 
 function feedbackMarkup() {
@@ -252,7 +306,7 @@ function pageCount(count) {
 }
 
 async function renderHome() {
-  const data = await api("dashboard");
+  const data = await loadDashboard();
   const todayKey = new Date().toLocaleDateString("en-CA");
   const pendingGroceries = data.groceries.filter((item) => Number(item.completed) !== 1);
   const pendingTasks = data.tasks.filter((task) => Number(task.completed) !== 1);
@@ -286,7 +340,8 @@ async function renderHome() {
 }
 
 async function renderGroceries() {
-  const { items } = await api("groceries");
+  const data = cachedDashboard();
+  const items = data ? groceriesFromDashboard(data) : (await api("groceries")).items;
   const active = items.filter((item) => Number(item.purchased) !== 1);
   const purchased = items.filter((item) => Number(item.purchased) === 1);
   const visible = state.groceryFilter === "active" ? active : purchased;
@@ -330,7 +385,8 @@ function calendarMarkup(items) {
 }
 
 async function renderAppointments() {
-  const { items } = await api("appointments");
+  const data = cachedDashboard();
+  const items = data ? appointmentsFromDashboard(data) : (await api("appointments")).items;
   const todayKey = new Date().toLocaleDateString("en-CA");
   const upcoming = items.filter((item) => dateKey(item.start_time) >= todayKey);
   const past = items.filter((item) => dateKey(item.start_time) < todayKey);
@@ -347,7 +403,8 @@ async function renderAppointments() {
 }
 
 async function renderTasks() {
-  const { items } = await api("tasks");
+  const data = cachedDashboard();
+  const items = data ? tasksFromDashboard(data) : (await api("tasks")).items;
   const active = items.filter((task) => Number(task.completed) !== 1).sort((a, b) => String(a.due_date || "9999-12-31").localeCompare(String(b.due_date || "9999-12-31")) || ["High", "Medium", "Low"].indexOf(a.priority) - ["High", "Medium", "Low"].indexOf(b.priority));
   const completed = items.filter((task) => Number(task.completed) === 1);
   const visible = state.taskFilter === "active" ? active : completed;
@@ -400,6 +457,7 @@ async function submitAuth(form) {
   const endpoint = state.authMode === "register" ? "register" : "login";
   try {
     const result = await api(endpoint, { method: "POST", body: JSON.stringify({ username, pin }) });
+    invalidateDashboard();
     state.user = result.user;
     state.view = "home";
     setFeedback("");
@@ -425,6 +483,7 @@ async function submitData(form) {
       await api("tasks", { method: "POST", body: JSON.stringify(values) });
       setFeedback("Task added.");
     }
+    invalidateDashboard();
     await render();
   } catch (error) {
     setFeedback(error.message, true);
@@ -437,6 +496,7 @@ async function toggleItem(input) {
   const property = kind === "groceries" ? "purchased" : "completed";
   try {
     await api(`${kind}/${input.dataset.id}`, { method: "PATCH", body: JSON.stringify({ [property]: input.checked }) });
+    invalidateDashboard();
     await refresh();
   } catch (error) {
     setFeedback(error.message, true);
@@ -449,6 +509,7 @@ async function deleteItem(button) {
   if (!window.confirm("Delete this item?")) return;
   try {
     await api(`${kind}/${button.dataset.id}`, { method: "DELETE" });
+    invalidateDashboard();
     await refresh("Item deleted.");
   } catch (error) {
     setFeedback(error.message, true);
@@ -495,6 +556,7 @@ app.addEventListener("click", async (event) => {
   if (button.dataset.deleteKind) return deleteItem(button);
   if (button.dataset.action === "logout") {
     try { await api("logout", { method: "POST" }); } catch { /* The local session still clears if the API is offline. */ }
+    invalidateDashboard();
     state.user = null;
     state.authMode = "login";
     setFeedback("");

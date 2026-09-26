@@ -1,6 +1,6 @@
 import streamlit as st
 
-from database import add_grocery, delete_grocery, get_grocery, toggle_grocery
+from database import add_grocery, delete_grocery, get_dashboard, toggle_grocery
 
 
 CATEGORIES = ["General", "Produce", "Dairy", "Meat", "Bakery", "Frozen", "Other"]
@@ -54,7 +54,7 @@ with st.expander("Add grocery item", icon="➕", expanded=False):
             else:
                 st.warning("Enter an item name.")
 
-rows = get_grocery(USER_ID)
+rows = get_dashboard(USER_ID)["groceries"]
 active = [row for row in rows if not row[4]]
 purchased = [row for row in rows if row[4]]
 

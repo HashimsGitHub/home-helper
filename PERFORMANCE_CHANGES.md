@@ -1,6 +1,7 @@
 # Performance improvements
 
-The app keeps Turso and reduces avoidable work in the Streamlit execution path.
+The app keeps Turso connections reusable and reduces avoidable work in its
+Streamlit and Azure Static Web Apps execution paths.
 
 ## Database
 
@@ -9,6 +10,8 @@ The app keeps Turso and reduces avoidable work in the Streamlit execution path.
 - Closes the session connection when the user signs out.
 - Loads groceries, appointments, and tasks for the home dashboard with one
   `UNION ALL` query instead of three separate remote queries.
+- Reuses the dashboard cache on category pages to avoid another Turso read
+  when navigating while that five-second cache is warm.
 - Caches user-keyed list and dashboard reads for five seconds.
 - Immediately clears the relevant list and dashboard caches after a write, so
   the user still sees their change without waiting for the cache to expire.
@@ -37,6 +40,14 @@ The app keeps Turso and reduces avoidable work in the Streamlit execution path.
 
 Streamlit Community Cloud cold starts after inactivity are controlled by the
 hosting platform and cannot be removed by application code.
+
+## Azure Static Web App
+
+- Reuses the dashboard response in browser memory for five seconds across Home
+  and category navigation. Expired data falls back to the existing category
+  endpoint.
+- Clears the browser cache after writes and authentication changes.
+- Reuses one module-scoped libSQL client in each Azure Functions worker.
 
 ## Production file watcher
 

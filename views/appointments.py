@@ -3,7 +3,7 @@ from datetime import date, datetime, time
 import streamlit as st
 from streamlit_calendar import calendar
 
-from database import add_appointment, delete_appointment, get_appointments
+from database import add_appointment, delete_appointment, get_dashboard
 from ui_helpers import friendly_date, parse_datetime
 
 
@@ -60,7 +60,7 @@ with st.expander("Add appointment", icon="➕", expanded=False):
                 )
                 st.toast("Appointment saved", icon="✅")
 
-rows = get_appointments(USER_ID)
+rows = get_dashboard(USER_ID)["appointments"]
 today = date.today()
 # Parse each appointment date once, then retain the original upcoming/past order.
 dated_rows = [(row, parse_datetime(row[3])) for row in rows]

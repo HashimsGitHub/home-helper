@@ -2,7 +2,7 @@ from datetime import date
 
 import streamlit as st
 
-from database import add_task, delete_task, get_tasks, toggle_task
+from database import add_task, delete_task, get_dashboard, toggle_task
 from ui_helpers import due_label
 
 
@@ -59,12 +59,12 @@ with st.expander("Add task", icon="➕", expanded=False):
             else:
                 st.warning("Enter a task name.")
 
-rows = get_tasks(USER_ID)
+rows = get_dashboard(USER_ID)["tasks"]
 active = sorted(
     (row for row in rows if not row[5]),
     key=lambda row: (row[4] or "9999-12-31", PRIORITY_ORDER.get(row[3], 3)),
 )
-completed = [row for row in rows if row[5]]
+completed = sorted((row for row in rows if row[5]), key=lambda row: -row[0])
 
 todo_tab, done_tab = st.tabs([f"To do ({len(active)})", f"Completed ({len(completed)})"])
 
