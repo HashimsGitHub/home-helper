@@ -30,6 +30,7 @@ body {
   background-image:
     linear-gradient(rgb(242 245 241 / 86%), rgb(242 245 241 / 86%)),
     url("/home-background.jpg");
+  background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
   background-attachment: fixed;
@@ -247,7 +248,6 @@ h1, h2, h3, p { margin-top: 0; }
 @keyframes arrive { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
 @media (max-width: 760px) {
-  body { background-size: 19px 19px; }
   .auth-screen { grid-template-columns: 1fr; max-width: 520px; gap: 24px; padding: 32px 20px 44px; }
   .auth-intro .brand { margin-bottom: 25px; }
   .auth-intro h1 { max-width: 400px; margin: 10px 0; font-size: 37px; }
