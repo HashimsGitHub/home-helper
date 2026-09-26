@@ -11,6 +11,8 @@ const state = {
   user: null,
   dashboardData: null,
   dashboardLoadedAt: 0,
+  listData: null,
+  pendingDelete: null,
   view: "home",
   authMode: "login",
   groceryFilter: "active",
@@ -68,9 +70,40 @@ async function loadDashboard() {
   return state.dashboardData;
 }
 
-function invalidateDashboard() {
+function invalidateDashboard({ preserveList = false } = {}) {
   state.dashboardData = null;
   state.dashboardLoadedAt = 0;
+  if (!preserveList) state.listData = null;
+}
+
+function cachedList(kind) {
+  const current = state.listData;
+  if (!current || current.kind !== kind || Date.now() - current.loadedAt >= DASHBOARD_CACHE_TTL_MS) return null;
+  return current.items;
+}
+
+function rememberList(kind, items, loadedAt = Date.now()) {
+  state.listData = { kind, items, loadedAt };
+  return items;
+}
+
+async function loadList(kind, fromDashboard) {
+  const dashboard = cachedDashboard();
+  if (dashboard) return rememberList(kind, fromDashboard(dashboard), state.dashboardLoadedAt);
+  const cached = cachedList(kind);
+  if (cached) return cached;
+  const { items } = await api(kind);
+  return rememberList(kind, items);
+}
+
+function updateCachedItem(kind, itemId, property, value) {
+  const entry = state.listData;
+  if (!entry || entry.kind !== kind) return undefined;
+  const item = entry.items.find((row) => String(row.id) === String(itemId));
+  if (!item) return undefined;
+  const previousValue = item[property];
+  item[property] = value;
+  return previousValue;
 }
 
 function groceriesFromDashboard(data) {
@@ -114,6 +147,8 @@ function feedbackMarkup() {
 function setFeedback(message = "", isError = false) {
   state.feedback = message;
   state.feedbackError = isError;
+  const panel = document.querySelector("#feedback-panel");
+  if (panel) panel.innerHTML = feedbackMarkup();
 }
 
 function navMarkup(mobile = false) {
@@ -131,16 +166,30 @@ function appFrame() {
     <div class="app-frame">
       <header class="topbar">
         <div class="brand"><span class="brand-mark" aria-hidden="true">HH</span><span class="brand-name">Home Helper</span></div>
-        <div class="user-tools"><span class="user-name">${escapeHtml(state.user.username)}</span><button class="button button-quiet" type="button" data-action="logout">Sign out</button></div>
+        <div class="user-tools"><span class="user-name">Hi! ${escapeHtml(state.user.username)}</span><button class="button button-quiet" type="button" data-action="logout">Sign out</button></div>
       </header>
       <div class="app-body">
         ${navMarkup()}
         <section class="workspace" aria-label="Home Helper workspace">
-          ${feedbackMarkup()}
+          <div id="feedback-panel">${feedbackMarkup()}</div>
           <div id="view-panel"><p class="loading">Loading your home...</p></div>
         </section>
       </div>
       ${navMarkup(true)}
+      <dialog id="delete-dialog" class="confirm-dialog" aria-labelledby="delete-dialog-title" aria-describedby="delete-dialog-description">
+        <div class="confirm-dialog-content">
+          <span class="confirm-dialog-mark" aria-hidden="true">!</span>
+          <div>
+            <span class="eyebrow">Confirm deletion</span>
+            <h2 id="delete-dialog-title">Delete this item?</h2>
+            <p id="delete-dialog-description">This item will be removed from your household list.</p>
+          </div>
+        </div>
+        <div class="confirm-dialog-actions">
+          <button class="button button-secondary" type="button" data-action="cancel-delete">Cancel</button>
+          <button class="button button-danger-solid" type="button" data-action="confirm-delete">Delete item</button>
+        </div>
+      </dialog>
     </div>`;
 }
 
@@ -322,7 +371,7 @@ async function renderHome() {
   return `
     <section class="page-content">
       <header class="home-heading"><span class="eyebrow">${new Intl.DateTimeFormat(undefined, { weekday: "long" }).format(new Date())}</span>
-        <h1 class="home-title">Home, at a glance.</h1><p class="home-date">${new Intl.DateTimeFormat(undefined, { day: "numeric", month: "long", year: "numeric" }).format(new Date())}</p>
+        <h1 class="home-title">${escapeHtml(state.user.username)}'s Home at a glance.</h1><p class="home-date">${new Intl.DateTimeFormat(undefined, { day: "numeric", month: "long", year: "numeric" }).format(new Date())}</p>
       </header>
       <section class="summary-grid" aria-label="Household summary">
         <button class="summary-tile" type="button" data-view="groceries"><span class="summary-top">Groceries <span>To buy</span></span><span class="summary-count">${pendingGroceries.length}</span></button>
@@ -341,8 +390,7 @@ async function renderHome() {
 }
 
 async function renderGroceries() {
-  const data = cachedDashboard();
-  const items = data ? groceriesFromDashboard(data) : (await api("groceries")).items;
+  const items = await loadList("groceries", groceriesFromDashboard);
   const active = items.filter((item) => Number(item.purchased) !== 1);
   const purchased = items.filter((item) => Number(item.purchased) === 1);
   const visible = state.groceryFilter === "active" ? active : purchased;
@@ -386,8 +434,7 @@ function calendarMarkup(items) {
 }
 
 async function renderAppointments() {
-  const data = cachedDashboard();
-  const items = data ? appointmentsFromDashboard(data) : (await api("appointments")).items;
+  const items = await loadList("appointments", appointmentsFromDashboard);
   const todayKey = new Date().toLocaleDateString("en-CA");
   const upcoming = items.filter((item) => dateKey(item.start_time) >= todayKey);
   const past = items.filter((item) => dateKey(item.start_time) < todayKey);
@@ -404,8 +451,7 @@ async function renderAppointments() {
 }
 
 async function renderTasks() {
-  const data = cachedDashboard();
-  const items = data ? tasksFromDashboard(data) : (await api("tasks")).items;
+  const items = await loadList("tasks", tasksFromDashboard);
   const active = items.filter((task) => Number(task.completed) !== 1).sort((a, b) => String(a.due_date || "9999-12-31").localeCompare(String(b.due_date || "9999-12-31")) || ["High", "Medium", "Low"].indexOf(a.priority) - ["High", "Medium", "Low"].indexOf(b.priority));
   const completed = items.filter((task) => Number(task.completed) === 1);
   const visible = state.taskFilter === "active" ? active : completed;
@@ -428,23 +474,31 @@ const renderers = {
   tasks: renderTasks,
 };
 
-async function render() {
-  app.innerHTML = state.user ? appFrame() : authScreen();
-  if (!state.user) return;
-
+async function renderPanel() {
   const panel = document.querySelector("#view-panel");
+  if (!panel || !state.user) return;
   const view = state.view;
+  panel.setAttribute("aria-busy", "true");
   try {
     panel.innerHTML = await renderers[view]();
   } catch (error) {
     if (!state.user) return render();
     panel.innerHTML = `<div class="feedback feedback-error" role="alert">${escapeHtml(error.message)} <button class="text-button" type="button" data-action="retry">Try again</button></div>`;
+  } finally {
+    panel.removeAttribute("aria-busy");
   }
 }
 
-async function refresh(message = "") {
-  setFeedback(message);
-  await render();
+async function render() {
+  app.innerHTML = state.user ? appFrame() : authScreen();
+  if (!state.user) return;
+
+  const dialog = document.querySelector("#delete-dialog");
+  dialog.addEventListener("close", () => { state.pendingDelete = null; });
+  dialog.addEventListener("click", (event) => {
+    if (event.target === dialog) dialog.close();
+  });
+  await renderPanel();
 }
 
 async function submitAuth(form) {
@@ -495,26 +549,48 @@ async function submitData(form) {
 async function toggleItem(input) {
   const kind = input.dataset.toggleKind;
   const property = kind === "groceries" ? "purchased" : "completed";
+  const itemId = input.dataset.id;
+  const previousValue = updateCachedItem(kind, itemId, property, Number(input.checked));
+  invalidateDashboard({ preserveList: true });
+  await renderPanel();
+
   try {
-    await api(`${kind}/${input.dataset.id}`, { method: "PATCH", body: JSON.stringify({ [property]: input.checked }) });
-    invalidateDashboard();
-    await refresh();
+    await api(`${kind}/${itemId}`, { method: "PATCH", body: JSON.stringify({ [property]: input.checked }) });
   } catch (error) {
+    if (!state.user) return render();
+    if (previousValue !== undefined) updateCachedItem(kind, itemId, property, previousValue);
     setFeedback(error.message, true);
-    await render();
+    await renderPanel();
   }
 }
 
-async function deleteItem(button) {
+function openDeleteDialog(button) {
   const kind = button.dataset.deleteKind;
-  if (!window.confirm("Delete this item?")) return;
+  const itemId = button.dataset.id;
+  const itemName = button.closest(".item-row")?.querySelector(".item-title")?.textContent.trim();
+  state.pendingDelete = { kind, itemId };
+  const description = document.querySelector("#delete-dialog-description");
+  description.textContent = itemName
+    ? `“${itemName}” will be removed from your household list.`
+    : "This item will be removed from your household list.";
+  document.querySelector("#delete-dialog").showModal();
+}
+
+async function deleteItem({ kind, itemId }) {
+  const cached = state.listData?.kind === kind ? state.listData : null;
+  const previousItems = cached?.items;
+  if (cached) cached.items = cached.items.filter((item) => String(item.id) !== String(itemId));
+  invalidateDashboard({ preserveList: true });
+  await renderPanel();
+
   try {
-    await api(`${kind}/${button.dataset.id}`, { method: "DELETE" });
-    invalidateDashboard();
-    await refresh("Item deleted.");
+    await api(`${kind}/${itemId}`, { method: "DELETE" });
+    setFeedback("Item deleted.");
   } catch (error) {
+    if (!state.user) return render();
+    if (cached && state.listData === cached) cached.items = previousItems;
     setFeedback(error.message, true);
-    await render();
+    await renderPanel();
   }
 }
 
@@ -554,7 +630,19 @@ app.addEventListener("click", async (event) => {
     state.calendarMonth = new Date(year, month - 1, 1);
     return render();
   }
-  if (button.dataset.deleteKind) return deleteItem(button);
+  if (button.dataset.deleteKind) return openDeleteDialog(button);
+  if (button.dataset.action === "cancel-delete") {
+    state.pendingDelete = null;
+    document.querySelector("#delete-dialog").close();
+    return;
+  }
+  if (button.dataset.action === "confirm-delete") {
+    const pendingDelete = state.pendingDelete;
+    state.pendingDelete = null;
+    document.querySelector("#delete-dialog").close();
+    if (pendingDelete) return deleteItem(pendingDelete);
+    return;
+  }
   if (button.dataset.action === "logout") {
     try { await api("logout", { method: "POST" }); } catch { /* The local session still clears if the API is offline. */ }
     invalidateDashboard();
