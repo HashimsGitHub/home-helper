@@ -43,9 +43,9 @@ hosting platform and cannot be removed by application code.
 
 ## Azure Static Web App
 
-- Reuses the dashboard response in browser memory for five seconds across Home
+- Reuses the dashboard response in browser memory for 30 seconds across Home
   and category navigation. Expired data falls back to the existing category
-  endpoint.
+  endpoint; changes from another device may take up to 30 seconds to appear.
 - Clears the browser cache after writes and authentication changes.
 - Reuses one module-scoped libSQL client in each Azure Functions worker.
 

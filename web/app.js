@@ -1,4 +1,5 @@
 const app = document.querySelector("#app");
+const DASHBOARD_CACHE_TTL_MS = 30_000;
 const categories = ["General", "Produce", "Dairy", "Meat", "Bakery", "Frozen", "Other"];
 const views = [
   { id: "home", label: "Home", letter: "H" },
@@ -55,7 +56,7 @@ async function api(path, options = {}) {
 }
 
 function cachedDashboard() {
-  if (!state.dashboardData || Date.now() - state.dashboardLoadedAt >= 5000) return null;
+  if (!state.dashboardData || Date.now() - state.dashboardLoadedAt >= DASHBOARD_CACHE_TTL_MS) return null;
   return state.dashboardData;
 }
 
